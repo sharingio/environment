@@ -1,0 +1,10 @@
+#+TITLE: Environment
+
+#+begin_quote
+The environment for pairing on Pair instances
+#+end_quote
+
+* TODO plan
+- [ ] migrate the container image across
+  - [ ] Emacs config
+  - [ ] ii.Dockerfile cli apps
