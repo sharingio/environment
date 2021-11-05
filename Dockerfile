@@ -118,3 +118,16 @@ RUN git clone $ENV_DOOM_CONFIG_REPO && \
 RUN /var/local/doom-emacs/bin/org-tangle .doom.d/ii.org \
   && yes | /var/local/doom-emacs/bin/doom install --no-env \
   && yes | /var/local/doom-emacs/bin/doom sync -e
+
+USER root
+# TODO install utilities
+#      currently needing to determine the downloading of
+#      external dependencies, given trying to make this image
+#      multi-arch
+
+RUN npm install --global prettier @prettier/plugin-php prettier-plugin-solidity
+RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
+  && touch /etc/localtime
+ENV LANG=en_US.utf8 \
+  USER=ii
+USER ii
