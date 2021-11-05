@@ -28,7 +28,7 @@ variables:
 
 .build: &build |
   img build \
-    -f $CI_PROJECT_DIR/build/Dockerfile \
+    -f $CI_PROJECT_DIR/Dockerfile \
     $CONTAINER_EXTRA_DESTINATION \
     -t $CI_REGISTRY_IMAGE:$BASE_TAG$BRANCH_NAME \
     --platform $PLATFORMS \
