@@ -18,7 +18,15 @@ RUN DEBIAN_FRONTEND=noninteractive \
   && DEBIAN_FRONTEND=noninteractive apt install --no-install-recommends -y \
     software-properties-common \
     gpg-agent \
+    curl \
   && yes '\n' | add-apt-repository ppa:git-core/ppa \
+  && echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" \
+    | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list \
+  && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg  add - \
+  && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg \
+  && echo \
+  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null \
   && apt update \
   && DEBIAN_FRONTEND=noninteractive apt install --no-install-recommends -y \
     emacs-nox \
@@ -27,7 +35,6 @@ RUN DEBIAN_FRONTEND=noninteractive \
     less \
     xz-utils \
     sudo \
-    curl \
     ca-certificates \
     libcap2-bin \
     git \
@@ -54,6 +61,39 @@ RUN DEBIAN_FRONTEND=noninteractive \
     iputils-ping \
     file \
     psmisc \
+    docker-ce-cli \
+    tree \
+    iproute2 \
+    net-tools \
+    tcpdump \
+    htop \
+    iftop \
+    tmux \
+    language-pack-en \
+    openjdk-16-jdk \
+    rlwrap \
+    fonts-powerline \
+    dnsutils \
+    python3-pip \
+    npm \
+    ripgrep \
+    python-is-python3 \
+    shellcheck \
+    pipenv \
+    fd-find \
+    gettext-base \
+    libcap2-bin \
+    locate \
+    flatpak-xdg-utils \
+    google-cloud-sdk \
+    awscli \
+    expect \
+    graphviz \
+    runit \
+    ssh-import-id \
+    bsdmainutils \
+    netcat \
+  && ln -s /usr/bin/fdfind /usr/local/bin/fd \
   && rm -rf /var/lib/apt/lists/*
 
 COPY etc/ /etc/
