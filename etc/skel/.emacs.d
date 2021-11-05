@@ -1,0 +1,1 @@
+/var/local/doom-emacs
