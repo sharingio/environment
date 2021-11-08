@@ -66,21 +66,17 @@ fi
 
 export PATH="$PATH:$HOME/go/bin:/usr/local/go/bin:$HOME/.doom.d/bin"
 
-if [ "$HUMACS_CONTAINER" = yes ]; then
-    . /usr/local/bin/ssh-find-agent.sh
-    if [ "$HUMACS_DISTRO" = "ii" ]; then
-        export GOPATH=${GOPATH:-$(go env GOPATH)}
+. /usr/local/bin/ssh-find-agent.sh
+export GOPATH=${GOPATH:-$(go env GOPATH)}
 
-        . <(kubectl completion bash)
-        . <(clusterctl completion bash 2> /dev/null)
-        . <(helm completion bash)
-        . <(talosctl completion bash)
-        . <(gh completion -s bash)
-        complete -C /usr/local/go/bin/mc mc
+. <(kubectl completion bash)
+. <(clusterctl completion bash 2> /dev/null)
+. <(helm completion bash)
+. <(talosctl completion bash)
+. <(gh completion -s bash)
+complete -C /usr/local/go/bin/mc mc
 
-        alias nerdctl="sudo --preserve-env /usr/local/go/bin/nerdctl"
-    fi
-fi
+alias nerdctl="sudo --preserve-env nerdctl"
 
 export EDITOR="editor"
 
