@@ -121,9 +121,7 @@ RUN /var/local/doom-emacs/bin/org-tangle .doom.d/ii.org \
 
 USER root
 COPY ./usr /usr
-ENV HUMACS_DISTRO=ii \
-  HUMACS_IMAGE="$HUMACS_IMAGE" \
-  DOCKER_VERSION=20.10.10 \
+ENV DOCKER_VERSION=20.10.10 \
   KIND_VERSION=0.11.1 \
   KUBECTL_VERSION=1.22.1 \
   GO_VERSION=1.17.3 \
