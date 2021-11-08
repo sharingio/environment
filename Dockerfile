@@ -262,5 +262,6 @@ RUN npm install --global prettier @prettier/plugin-php prettier-plugin-solidity
 RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
   && touch /etc/localtime
 ENV LANG=en_US.utf8 \
+  DOCKER_CLI_EXPERIMENTAL=enabled \
   USER=ii
 USER ii
