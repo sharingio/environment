@@ -2,6 +2,7 @@
 
 [ ! -z "$SHARINGIO_PAIR_DISABLE_SVC_INGRESS_BIND_RECONCILER" ] && exit 0
 
+TEMPLATE_BASE_DIR="/usr/local/share/sharingio/environment/templates/k8s-service-ingress-port-bind-reconciler"
 KUBE_CONTEXTS="$(kubectl config view -o yaml | yq e .contexts[].name -P -)"
 if echo "${KUBE_CONTEXTS}" | grep -q 'in-cluster'; then
     KUBE_CONTEXT="in-cluster"
@@ -52,7 +53,7 @@ while true; do
         fi
         export hostName="$svcName.$SHARINGIO_PAIR_BASE_DNS_NAME"
 
-        envsubst < /var/local/templates/k8s-service-ingress-port-bind-reconciler/service.yaml | kubectl --context "$KUBE_CONTEXT" apply -f -
+        envsubst < "${TEMPLATE_BASE_DIR}"/service.yaml | kubectl --context "$KUBE_CONTEXT" apply -f -
 
         if [ ! "$protocol" = "TCP" ]; then
             continue
@@ -60,9 +61,9 @@ while true; do
 
         if [ $K8S_MINOR_VERSION -lt 18 ] || [ $K8S_MINOR_VERSION = 18 ];
         then
-          envsubst < /var/local/templates/k8s-service-ingress-port-bind-reconciler/ingress-v1.18-or-earlier.yaml | kubectl --context "$KUBE_CONTEXT" apply -f -
+          envsubst < "${TEMPLATE_BASE_DIR}"/ingress-v1.18-or-earlier.yaml | kubectl --context "$KUBE_CONTEXT" apply -f -
         else
-          envsubst < /var/local/templates/k8s-service-ingress-port-bind-reconciler/ingress.yaml | kubectl --context "$KUBE_CONTEXT" apply -f -
+          envsubst < "${TEMPLATE_BASE_DIR}"/ingress.yaml | kubectl --context "$KUBE_CONTEXT" apply -f -
         fi
 
         svcNames="$svcName $svcNames"
