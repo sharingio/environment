@@ -188,10 +188,6 @@ RUN . /usr/lib/sharingio/environment/helper.sh \
   && curl -L https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${ARCH_TYPE_2}.zip \
   | gunzip -c - > /usr/local/bin/terraform && \
   chmod +x /usr/local/bin/terraform
-# dive
-RUN . /usr/lib/sharingio/environment/helper.sh \
-  && curl -L https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}/dive_${DIVE_VERSION}_linux_${ARCH_TYPE_2}.tar.gz \
-  | tar --directory /usr/local/bin/ --extract --ungzip dive
 RUN . /usr/lib/sharingio/environment/helper.sh \
   && curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/v${CRICTL_VERSION}/crictl-v${CRICTL_VERSION}-linux-${ARCH_TYPE_2}.tar.gz \
   | tar --directory /usr/local/bin --extract --gunzip crictl
@@ -222,6 +218,7 @@ RUN set -x \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get gitlab.com/safesurfer/go-http-server \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/google/go-containerregistry/cmd/crane \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/google/go-containerregistry/cmd/gcrane \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/wagoodman/dive@v${DIVE_VERSION} \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/equinix/metal-cli/cmd/metal@v$METALCLI_VERSION
 # Install Clojure
 RUN curl -OL https://download.clojure.org/install/linux-install-${CLOJURE_VERSION}.sh \
