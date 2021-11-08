@@ -1,0 +1,64 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]; then
+    cat <<EOF
+Usage: $(basename $0) [REPOS...]
+
+  i.e: $(basename $0) https://github.com/kubernetes/kubernetes
+       $(basename $0) https://github.com/sharingio/pair git@github.com:ii/org.git
+EOF
+fi
+
+REPOS=${*}
+
+if [ -z "$SSH_AUTH_SOCK" ]; then
+    cat <<EOF
+Warning: missing value for SSH_AUTH_SOCK
+         are you connected via SSH?
+
+Action: to load the agent use
+  . /usr/local/bin/ssh-find-agent.sh
+
+loading the agent inside '$(basename $0)'...
+EOF
+    _= . /usr/local/bin/ssh-find-agent.sh
+fi
+
+cd $INIT_DEFAULT_REPOS_FOLDER
+re="^(https|git)(:\/\/|@)([^\/:]+)[\/:]([^\/:]+)\/(.+)(.git|)$"
+
+for repo in ${REPOS[*]}; do
+    unset protocol separator hostname org reponame
+    if [[ $repo =~ $re ]]; then    
+        protocol=${BASH_REMATCH[1]}
+        separator=${BASH_REMATCH[2]}
+        hostname=${BASH_REMATCH[3]}
+        org=${BASH_REMATCH[4]}
+        reponame=${BASH_REMATCH[5]%.git}
+    else
+        echo "Error: repo URI is invalid for '$repo'" > /dev/stderr
+        continue
+    fi
+
+    DEST="${INIT_DEFAULT_REPOS_FOLDER}"
+    if [ "${GIT_CLONE_STRUCTURED_USE_HOSTNAME}" = "true" ]; then
+        DEST="${DEST}/${hostname}"
+    fi
+    DEST="${DEST}/${org}/${reponame}"
+    mkdir -p "$DEST"
+    git clone -v --recursive "$repo" "$DEST"
+    code=$?
+    if [ "$protocol" = "git" ] && [ ! $code -eq 0 ] && [ ! -d "$DEST" ] && [ -n "${SHARINGIO_PAIR_NAME}" ]; then
+        cat <<EOF >> $HOME/pair-environment-retry-clone-repos.sh
+git-clone-restructured $repo # clone $org/$reponame
+EOF
+        chmod +x $HOME/pair-environment-retry-clone-repos.sh
+    fi
+    if [ -x "$DEST/.sharing.io/init" ] && [ -n "${SHARINGIO_PAIR_NAME}" ]; then
+        cat <<EOF
+
+# initialise $org/$reponame
+$DEST/.sharing.io/init 
+EOF
+    fi
+done
