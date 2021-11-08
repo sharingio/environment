@@ -49,7 +49,8 @@ if [ "${REINIT_HOME_FOLDER:-false}" = "true" ]; then
         if [ ! -f "${HOME}"/.pair-environment-has-reinit ]; then
             cd /etc/skel
             cp -r . /home/ii
-            chmod 0600 "${HOME}"/.kube/config
+            [ -f "${HOME}"/.kube/config ] \
+                && chmod 0600 "${HOME}"/.kube/config
             touch "${HOME}"/.pair-environment-has-reinit
         fi
     )
@@ -61,9 +62,9 @@ fi
         mkdir -p "${INIT_DEFAULT_REPOS_FOLDER}"
         for repo in ${INIT_DEFAULT_REPOS}; do
             if [ "$PROJECT_CLONE_STRUCTURE" = "structured" ]; then
-                git-clone-structured "$repo"
+                git-clone-structured "$repo" || true
             elif [ "$PROJECT_CLONE_STRUCTURE" = "plain" ]; then
-                git clone -v --recursive "$repo"
+                git clone -v --recursive "$repo" || true
             fi
         done
     fi
@@ -74,7 +75,7 @@ fi
 (
     cd /etc/service
     for SVC in $(find . -type f -name 'run' | xargs -I {} dirname {}); do
-        mkdir "${SVC}"/supervise
+        mkdir -p "${SVC}"/supervise
     done
 )
 runsvdir /etc/service &
