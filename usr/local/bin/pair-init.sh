@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "${PAIR_ENVIRONMENT_DEBUG}" = "true" ]; then
+if [ "${PAIR_ENVIRONMENT_DEBUG:-}" = "true" ]; then
     set -x
 fi
 
@@ -32,21 +32,12 @@ then
     ssh-keygen -b 4096 -t rsa -f ~/.ssh/id_rsa -q -N ""
 fi
 
-if [ -z "$GIT_AUTHOR_EMAIL" ]; then
-    echo "ERROR: GIT_AUTHOR_EMAIL env Must be set"
-    exit 1
-fi
-if [ -z "$GIT_AUTHOR_NAME" ]; then
-    echo "ERROR: GIT_AUTHOR_NAME env Must be set"
-    exit 1
-fi
-
 export ALTERNATE_EDITOR=""
 export INIT_ORG_FILE="${INIT_ORG_FILE:-$HOME}"
 export INIT_DEFAULT_DIR="${INIT_DEFAULT_DIR:-$HOME}"
-export INIT_DEFAULT_REPOS="${INIT_DEFAULT_REPOS}"
+export INIT_DEFAULT_REPOS="${INIT_DEFAULT_REPOS:-}"
 export INIT_DEFAULT_REPOS_FOLDER="${INIT_DEFAULT_REPOS_FOLDER:-$INIT_DEFAULT_DIR}"
-export INIT_PREFINISH_BLOCK="${INIT_PREFINISH_BLOCK}"
+export INIT_PREFINISH_BLOCK="${INIT_PREFINISH_BLOCK:-}"
 export PROJECT_CLONE_STRUCTURE="${PROJECT_STRUCTURE:-structured}"
 
 # Load SSH_AUTH_SOCK
