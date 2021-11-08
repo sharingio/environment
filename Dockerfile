@@ -120,7 +120,7 @@ RUN /var/local/doom-emacs/bin/org-tangle .doom.d/ii.org \
   && yes | /var/local/doom-emacs/bin/doom sync -e
 
 USER root
-COPY ./usr /usr
+COPY ./usr/lib /usr/lib
 ENV DOCKER_VERSION=20.10.10 \
   KIND_VERSION=0.11.1 \
   KUBECTL_VERSION=1.22.1 \
@@ -256,6 +256,7 @@ RUN set -x && \
   nerdctl version | grep Version && \
   metal --version
 
+COPY ./usr /usr
 RUN npm install --global prettier @prettier/plugin-php prettier-plugin-solidity
 RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
   && touch /etc/localtime
