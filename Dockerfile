@@ -231,7 +231,7 @@ RUN set -x && \
   gh version && \
   tmate -V && \
   helm version && \
-  clusterctl version && \
+  clusterctl && \
   talosctl version --client && \
   terraform version && \
   dive version && \
