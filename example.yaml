@@ -1,0 +1,31 @@
+# Deployment example
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: environment-dev
+  namespace: default
+spec:
+  serviceName: environment-dev
+  replicas: 1
+  selector:
+    matchLabels:
+      app: environment-dev
+  template:
+    metadata:
+      labels:
+        app: environment-dev
+    spec:
+      shareProcessNamespace: true
+      containers:
+        - name: environment
+          image: registry.gitlab.com/sharingio/environment:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - sleep
+            - +Inf
+        - name: environment-exporter
+          image: registry.gitlab.com/sharingio/environment/exporter:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 10093

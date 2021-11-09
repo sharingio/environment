@@ -1,0 +1,97 @@
+#+TITLE: environment-exporter
+
+Exports a JSON list of processes and env vars that are listening on ports at :10093/listening
+
+* Configuration
+Environment variables to configure the exporter
+
+| Name       | Default | Purpose             |
+|------------+---------+---------------------|
+| ~APP_PORT~ | =:10093= | The port to bind to |
+
+* API
+An example request
+#+NAME: example request
+#+begin_src shell
+curl -s http://localhost:10093/listening | jq .
+#+end_src
+
+will return contents like this
+#+RESULTS: example request
+#+begin_example
+[
+  {
+    "name": "go-http-server",
+    "pid": 995234,
+    "uid": 1000,
+    "localAddr": {
+      "IP": "::",
+      "Port": 8080
+    },
+    "env": {
+      "SHARINGIO_PAIR_INGRESS_RECONCILER_ALLOWED_PORTS": "",
+      "SHARINGIO_PAIR_INGRESS_RECONCILER_DISABLED_PORTS": "",
+      "SHARINGIO_PAIR_SET_HOSTNAME": "hii"
+    }
+  },
+  {
+    "name": "go-http-server",
+    "pid": 995234,
+    "uid": 1000,
+    "localAddr": {
+      "IP": "::",
+      "Port": 2112
+    },
+    "env": {
+      "SHARINGIO_PAIR_INGRESS_RECONCILER_ALLOWED_PORTS": "",
+      "SHARINGIO_PAIR_INGRESS_RECONCILER_DISABLED_PORTS": "",
+      "SHARINGIO_PAIR_SET_HOSTNAME": "hii"
+    }
+  }
+]
+#+end_example
+
+* Deployment example
+Note that when running in Kubernetes, the field =shareProcessNamespace= in =v1.Pod.Spec= must be set to =true=.
+
+#+begin_src yaml :tangle ../../example.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: environment-dev
+  namespace: default
+spec:
+  serviceName: environment-dev
+  replicas: 1
+  selector:
+    matchLabels:
+      app: environment-dev
+  template:
+    metadata:
+      labels:
+        app: environment-dev
+    spec:
+      shareProcessNamespace: true
+      containers:
+        - name: environment
+          image: registry.gitlab.com/sharingio/environment:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - sleep
+            - +Inf
+        - name: environment-exporter
+          image: registry.gitlab.com/sharingio/environment/exporter:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 10093
+#+end_src
+
+Apply the manifest
+#+begin_src shell :dir ../..
+kubectl apply -f ./example.yaml
+#+end_src
+
+#+RESULTS:
+#+begin_example
+statefulset.apps/environment-dev created
+#+end_example
