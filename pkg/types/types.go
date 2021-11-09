@@ -5,11 +5,14 @@ import (
 )
 
 type Process struct {
-	Name      string            `json:"name"`
-	Pid       int               `json:"pid"`
-	Uid       uint32            `json:"uid"`
-	LocalAddr *netstat.SockAddr `json:"localAddr"`
-	Env       map[string]string `json:"env"`
+	Name          string            `json:"name"`
+	Pid           int               `json:"pid"`
+	Uid           uint32            `json:"uid"`
+	LocalAddr     *netstat.SockAddr `json:"localAddr"`
+	Env           map[string]string `json:"env"`
+	Hostname      string            `json:"hostname"`
+	AllowedPorts  []int             `json:"allowedPorts"`
+	DisabledPorts []int             `json:"disabledPorts"`
 }
 
 type EnvironmentVariableName string

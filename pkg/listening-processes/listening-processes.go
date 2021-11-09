@@ -3,6 +3,8 @@ package listeningprocesses
 import (
 	"log"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/cakturk/go-netstat/netstat"
 
@@ -11,6 +13,18 @@ import (
 )
 
 type sockFn = func(netstat.AcceptFn) ([]netstat.SockTabEntry, error)
+
+func GetPortsListFromString(portsString string) (ports []int) {
+	portsStrings := strings.Split(portsString, ",")
+	for _, p := range portsStrings {
+		port, _ := strconv.Atoi(p)
+		if port == 0 {
+			continue
+		}
+		ports = append(ports, port)
+	}
+	return ports
+}
 
 func CallSockToAppendProcessList(fn sockFn) (processes []netstat.SockTabEntry, err error) {
 	processes, err = fn(func(s *netstat.SockTabEntry) bool {
@@ -62,12 +76,17 @@ func ListListeningProcesses() (processes []types.Process, err error) {
 			return []types.Process{}, err
 		}
 
+		allowedPorts := GetPortsListFromString(string(types.EnvironmentVariableNameSharingioPairIngressReconcilerAllowedPorts))
+		disabledPorts := GetPortsListFromString(string(types.EnvironmentVariableNameSharingioPairIngressReconcilerDisabledPorts))
+
 		process := types.Process{
-			Name:      p.Process.Name,
-			Pid:       p.Process.Pid,
-			Uid:       p.UID,
-			LocalAddr: p.LocalAddr,
-			Env:       env,
+			Name:          p.Process.Name,
+			Pid:           p.Process.Pid,
+			Uid:           p.UID,
+			LocalAddr:     p.LocalAddr,
+			Hostname:      env[string(types.EnvironmentVariableNameSharingioPairSetHostname)],
+			AllowedPorts:  allowedPorts,
+			DisabledPorts: disabledPorts,
 		}
 		processes = append(processes, process)
 	}
