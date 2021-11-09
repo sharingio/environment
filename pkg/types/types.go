@@ -13,6 +13,8 @@ type Process struct {
 	Hostname      string            `json:"hostname"`
 	AllowedPorts  []int             `json:"allowedPorts"`
 	DisabledPorts []int             `json:"disabledPorts"`
+
+	// TODO add source of processes (pod name and namespace)
 }
 
 type EnvironmentVariableName string

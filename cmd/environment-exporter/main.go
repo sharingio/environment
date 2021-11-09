@@ -15,7 +15,6 @@ import (
 
 func getListenRoute(w http.ResponseWriter, r *http.Request) {
 	listening, err := l.ListListeningProcesses()
-	log.Println(listening)
 	if err != nil {
 		log.Printf("%v\n", err)
 		return

@@ -1,7 +1,6 @@
 package listeningprocesses
 
 import (
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -39,12 +38,6 @@ func CallSockToAppendProcessList(fn sockFn) (processes []netstat.SockTabEntry, e
 				continue
 			}
 			p = append(p, s)
-			env, err := environment.GetEnvForPid(s.Process.Pid)
-			if err != nil {
-				log.Println(err.Error())
-			} else {
-				log.Printf("%#v\n", env)
-			}
 		}
 		return p
 	}()
