@@ -174,10 +174,6 @@ RUN . /usr/lib/sharingio/environment/helper.sh \
 # helm binary
 RUN . /usr/lib/sharingio/environment/helper.sh \
   && curl -L https://get.helm.sh/helm-v${HELM_VERSION}-linux-${ARCH_TYPE_2}.tar.gz | tar --directory /usr/local/bin --extract -xz --strip-components 1 linux-${ARCH_TYPE_2}/helm
-# clusterctl
-RUN . /usr/lib/sharingio/environment/helper.sh \
-  && curl -L -o /usr/local/bin/clusterctl https://github.com/kubernetes-sigs/cluster-api/releases/download/v${CLUSTERCTL_VERSION}/clusterctl-linux-${ARCH_TYPE_2} && \
-  chmod +x /usr/local/bin/clusterctl
 # talosctl
 RUN . /usr/lib/sharingio/environment/helper.sh \
   && curl -L -o /usr/local/bin/talosctl https://github.com/talos-systems/talos/releases/download/v${TALOSCTL_VERSION}/talosctl-linux-${ARCH_TYPE_2} && \
@@ -219,6 +215,7 @@ RUN set -x \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/google/go-containerregistry/cmd/gcrane \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/wagoodman/dive@v${DIVE_VERSION} \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/equinix/metal-cli/cmd/metal@v$METALCLI_VERSION
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install go install sigs.k8s.io/cluster-api/cmd/clusterctl@v${CLUSTERCTL_VERSION}
 # Install Clojure
 RUN curl -OL https://download.clojure.org/install/linux-install-${CLOJURE_VERSION}.sh \
     && bash linux-install-${CLOJURE_VERSION}.sh \
