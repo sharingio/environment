@@ -173,7 +173,7 @@ RUN . /usr/lib/sharingio/environment/helper.sh \
   --strip-components 1 tmate-${TMATE_VERSION}-static-linux-${ARCH_TYPE_3}/tmate
 # helm binary
 RUN . /usr/lib/sharingio/environment/helper.sh \
-  && curl -L https://get.helm.sh/helm-v${HELM_VERSION}-linux-${ARCH_TYPE_2}.tar.gz | tar --directory /usr/local/bin --extract -xz --strip-components 1 linux-${ARCH_TYPE_2/helm
+  && curl -L https://get.helm.sh/helm-v${HELM_VERSION}-linux-${ARCH_TYPE_2}.tar.gz | tar --directory /usr/local/bin --extract -xz --strip-components 1 linux-${ARCH_TYPE_2}/helm
 # clusterctl
 RUN . /usr/lib/sharingio/environment/helper.sh \
   && curl -L -o /usr/local/bin/clusterctl https://github.com/kubernetes-sigs/cluster-api/releases/download/v${CLUSTERCTL_VERSION}/clusterctl-linux-${ARCH_TYPE_2} && \
