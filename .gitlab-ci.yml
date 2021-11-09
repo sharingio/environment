@@ -36,6 +36,7 @@ variables:
 
 build:
   stage: build
+  timeout: 5h
   image:
     name: docker.io/alpine:3.14
     entrypoint: [""]
