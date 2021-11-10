@@ -35,8 +35,24 @@ func GetPodLabelsFilePath() (output string) {
 	return GetEnvOrDefault("APP_POD_LABELS_FILE_PATH", "/etc/podlabels/labels")
 }
 
+// GetAppExternalIP
+// the externalIP for the cluster
+// this is only used in exposer
+func GetAppExternalIP() (output string) {
+	return GetEnvOrDefault("APP_EXTERNAL_IP", GetEnvOrDefault("SHARINGIO_PAIR_LOAD_BALANCER_IP", ""))
+}
+
+// GetAppExporterEndpoint
+// the HTTP URI for the exporter
+// e.g: http://environment-exporter.default:10093
+// this is only used in exposer
+func GetAppExporterEndpoint() (output string) {
+	return GetEnvOrDefault("APP_EXPORTER_ENDPOINT", "http://environment-exporter.default:10093")
+}
+
 // GetPodName ...
 // the name of the Pod
+// this is only used in the exporter
 func GetPodName() (output string) {
 	return GetEnvOrDefault("POD_NAME", GetEnvOrDefault("HOSTNAME", ""))
 }

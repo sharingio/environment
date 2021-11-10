@@ -46,6 +46,7 @@ func CallSockToAppendProcessList(fn sockFn) (processes []netstat.SockTabEntry, e
 }
 
 func ListListeningProcesses() (processes []types.Process, err error) {
+	// TODO add protocol to list of processes
 	var processSockList []netstat.SockTabEntry
 	processSockList, err = CallSockToAppendProcessList(netstat.UDPSocks)
 	if err != nil {
@@ -72,6 +73,10 @@ func ListListeningProcesses() (processes []types.Process, err error) {
 	}
 
 	for _, p := range processSockList {
+		// only include if on all interfaces
+		if p.LocalAddr.IP.String() != string(types.IPAllInterfaces) {
+			continue
+		}
 		env, err := environment.GetEnvForPid(p.Process.Pid)
 		if err != nil {
 			return []types.Process{}, err
@@ -79,18 +84,26 @@ func ListListeningProcesses() (processes []types.Process, err error) {
 
 		allowedPorts := GetPortsListFromString(string(types.EnvironmentVariableNameSharingioPairIngressReconcilerAllowedPorts))
 		disabledPorts := GetPortsListFromString(string(types.EnvironmentVariableNameSharingioPairIngressReconcilerDisabledPorts))
+		disabled, _ := strconv.ParseBool(env[string(types.EnvironmentVariableNameSharingioPairExposerDisabled)])
 
 		process := types.Process{
 			Name:          p.Process.Name,
+			Protocol:      "TCP",
 			Pid:           p.Process.Pid,
 			Uid:           p.UID,
-			LocalAddr:     p.LocalAddr,
+			IP:            p.LocalAddr.IP,
+			Port:          p.LocalAddr.Port,
 			Hostname:      env[string(types.EnvironmentVariableNameSharingioPairSetHostname)],
 			AllowedPorts:  allowedPorts,
 			DisabledPorts: disabledPorts,
+			Disabled:      disabled,
 			PodName:       podName,
 			PodNamespace:  podNamespace,
 			PodLabels:     podLabels,
+			ServiceName:   "",
+			ServicePort:   0,
+			ExternalIP:    "",
+			IngressHost:   "",
 		}
 		processes = append(processes, process)
 	}
