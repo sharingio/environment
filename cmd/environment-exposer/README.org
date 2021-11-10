@@ -1,0 +1,9 @@
+#+TITLE: environment-exposer
+
+Exposes processes exported by environment-exporter as Kubernetes Service and Ingress resources.
+
+* Configuration
+| Name                    | Default                                     | Description                                       |
+|-------------------------+---------------------------------------------+---------------------------------------------------|
+| ~APP_EXPORTER_ENDPOINT~ | =http://environment-exporter.default:10093= | The endpoint for environment-exporter             |
+| ~APP_EXTERNAL_IP~       | =""=                                        | The IP which the Pair instance is accessible from |
