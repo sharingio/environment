@@ -7,6 +7,7 @@ import (
 
 	"github.com/cakturk/go-netstat/netstat"
 
+	"github.com/sharingio/environment/pkg/common"
 	"github.com/sharingio/environment/pkg/environment"
 	"github.com/sharingio/environment/pkg/types"
 )
@@ -63,6 +64,13 @@ func ListListeningProcesses() (processes []types.Process, err error) {
 		return []types.Process{}, err
 	}
 
+	podName := common.GetPodName()
+	podNamespace := environment.GetNamespace()
+	podLabels, err := environment.GetPodLabels()
+	if err != nil {
+		return []types.Process{}, err
+	}
+
 	for _, p := range processSockList {
 		env, err := environment.GetEnvForPid(p.Process.Pid)
 		if err != nil {
@@ -80,6 +88,9 @@ func ListListeningProcesses() (processes []types.Process, err error) {
 			Hostname:      env[string(types.EnvironmentVariableNameSharingioPairSetHostname)],
 			AllowedPorts:  allowedPorts,
 			DisabledPorts: disabledPorts,
+			PodName:       podName,
+			PodNamespace:  podNamespace,
+			PodLabels:     podLabels,
 		}
 		processes = append(processes, process)
 	}

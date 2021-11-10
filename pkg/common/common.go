@@ -29,6 +29,18 @@ func GetAppPort() (output string) {
 	return GetEnvOrDefault("APP_PORT", ":10093")
 }
 
+// GetPodLabelsFilePath ...
+// the path to a downward API generated file containing the defined Pod labels
+func GetPodLabelsFilePath() (output string) {
+	return GetEnvOrDefault("APP_POD_LABELS_FILE_PATH", "/etc/podlabels/labels")
+}
+
+// GetPodName ...
+// the name of the Pod
+func GetPodName() (output string) {
+	return GetEnvOrDefault("POD_NAME", GetEnvOrDefault("HOSTNAME", ""))
+}
+
 // Logging ...
 // basic request logging middleware
 func Logging(next http.Handler) http.Handler {
