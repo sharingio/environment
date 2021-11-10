@@ -7,3 +7,9 @@ cd $GIT_ROOT
 if ! git remote -v | grep -q gitlab; then
     git remote add gitlab git@gitlab.com:sharingio/environment.git
 fi
+
+echo "Preparing for environment-exporter"
+mkdir -p /etc/podlabels/
+kubectl get pod "${HOSTNAME}" \
+    -o=go-template='{{ range $key, $value := .metadata.labels }}{{ $key }}={{ $value}}{{ "\n" }}{{ end }}' \
+    | sudo tee /etc/podlabels/labels
