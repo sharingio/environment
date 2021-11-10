@@ -1,4 +1,6 @@
 # Deployment example
+# Note that when running in Kubernetes, the field =shareProcessNamespace= in =v1.Pod.Spec= must be set to =true=.
+
 
 apiVersion: apps/v1
 kind: StatefulSet
@@ -21,11 +23,29 @@ spec:
         - name: environment
           image: registry.gitlab.com/sharingio/environment:latest
           imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: podlabels
+              mountPath: /etc/podlabels
           command:
             - sleep
             - +Inf
         - name: environment-exporter
           image: registry.gitlab.com/sharingio/environment/exporter:latest
           imagePullPolicy: IfNotPresent
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
           ports:
             - containerPort: 10093
+          volumeMounts:
+            - name: podlabels
+              mountPath: /etc/podlabels
+      volumes:
+      - name: podlabels
+        downwardAPI:
+          items:
+            - path: "labels"
+              fieldRef:
+                fieldPath: metadata.labels
