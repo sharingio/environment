@@ -26,7 +26,7 @@ func GetAppEnvFile() (output string) {
 // GetAppPort ...
 // the port to bind to
 func GetAppPort() (output string) {
-	return GetEnvOrDefault("APP_PORT", ":10093")
+	return GetEnvOrDefault("APP_PORT", "localhost:10093")
 }
 
 // GetPodLabelsFilePath ...

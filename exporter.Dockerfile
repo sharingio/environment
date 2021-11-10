@@ -23,6 +23,6 @@ COPY --from=extras /etc/passwd /etc/passwd
 COPY --from=extras /etc/group /etc/group
 COPY --from=extras /usr/share/zoneinfo /usr/share/zoneinfo
 COPY --from=extras /etc/ssl /etc/ssl
-EXPOSE 443
+EXPOSE 10093
 USER user
 ENTRYPOINT ["/app/bin/environment-exporter"]
