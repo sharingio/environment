@@ -24,6 +24,8 @@ spec:
           image: registry.gitlab.com/sharingio/environment:latest
           imagePullPolicy: IfNotPresent
           volumeMounts:
+            - name: home-ii
+              mountPath: /home/ii
             - name: podlabels
               mountPath: /etc/podlabels
           command:
@@ -43,6 +45,9 @@ spec:
             - name: podlabels
               mountPath: /etc/podlabels
       volumes:
+      - name: home-ii
+        hostPath:
+          path: /home/ii
       - name: podlabels
         downwardAPI:
           items:
