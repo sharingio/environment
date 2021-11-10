@@ -5,11 +5,11 @@ Exports a JSON list of processes and env vars that are listening on ports at :10
 * Configuration
 Environment variables to configure the exporter
 
-| Name                      | Default                 | Purpose                                                                                                                                     |
-|---------------------------+-------------------------+---------------------------------------------------------------------------------------------------------------------------------------------|
-| ~POD_NAME~                | ==                      | The name for the Pod                                                                                                                        |
-| ~APP_PORT~                | =:10093=                | The port to bind to                                                                                                                         |
-| ~APP_POD_LABELS_FILE_PATH | =/etc/podlabels/labels= | The path to a downward API generated file containing the labels set in =metadata.labels=, used for matching against when creating a Service |
+| Name                       | Default                 | Purpose                                                                                                                                     |
+|----------------------------+-------------------------+---------------------------------------------------------------------------------------------------------------------------------------------|
+| ~POD_NAME~                 | ==                      | The name for the Pod                                                                                                                        |
+| ~APP_PORT~                 | =:10093=                | The port to bind to                                                                                                                         |
+| ~APP_POD_LABELS_FILE_PATH~ | =/etc/podlabels/labels= | The path to a downward API generated file containing the labels set in =metadata.labels=, used for matching against when creating a Service |
 
 * API
 An example request
