@@ -4,7 +4,3 @@
 The environment for pairing on Pair instances
 #+end_quote
 
-* TODO plan
-- [x] migrate the container image across
-  - [x] Emacs config
-  - [x] ii.Dockerfile cli apps
