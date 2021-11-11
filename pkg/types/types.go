@@ -29,11 +29,15 @@ type Process struct {
 
 type EnvVarName string
 
-// TODO shorten to EnvVarName ...
 // TODO rename to SHARINGIO_PAIR_EXPOSER ...
 const (
+	EnvVarNameSharingioPairExposerDisabled      EnvVarName = "SHARINGIO_PAIR_EXPOSER_DISABLED"
+	EnvVarNameSharingioPairExposerHostname      EnvVarName = "SHARINGIO_PAIR_EXPOSER_HOSTNAME"
+	EnvVarNameSharingioPairExposerAllowedPorts  EnvVarName = "SHARINGIO_PAIR_EXPOSER_ALLOWED_PORTS"
+	EnvVarNameSharingioPairExposerDisabledPorts EnvVarName = "SHARINGIO_PAIR_EXPOSER_DISABLED_PORTS"
+
+	// deprecated
 	EnvVarNameSharingioPairSetHostname                    EnvVarName = "SHARINGIO_PAIR_SET_HOSTNAME"
-	EnvVarNameSharingioPairExposerDisabled                EnvVarName = "SHARINGIO_PAIR_EXPOSER_DISABLED"
 	EnvVarNameSharingioPairIngressReconcilerAllowedPorts  EnvVarName = "SHARINGIO_PAIR_INGRESS_RECONCILER_ALLOWED_PORTS"
 	EnvVarNameSharingioPairIngressReconcilerDisabledPorts EnvVarName = "SHARINGIO_PAIR_INGRESS_RECONCILER_DISABLED_PORTS"
 )
