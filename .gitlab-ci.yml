@@ -98,7 +98,7 @@ build-exporter:
     - *container-build-pre-script
     - *declare-extra-destinations-img
   script:
-    - *build
+    - *build-img
 
 build-exposer:
   stage: build
