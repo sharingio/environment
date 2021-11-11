@@ -91,7 +91,7 @@ func NewProcessForSockTabEntry(sock netstat.SockTabEntry, overrides types.Proces
 
 type netstatSock struct {
 	fn       func(netstat.AcceptFn) ([]netstat.SockTabEntry, error)
-	protocol string
+	protocol types.Protocol
 }
 
 func ListListeningProcesses() (processes []types.Process, err error) {
@@ -100,19 +100,19 @@ func ListListeningProcesses() (processes []types.Process, err error) {
 	socks := []netstatSock{
 		{
 			fn:       netstat.UDPSocks,
-			protocol: "UDP",
+			protocol: types.ProtocolUDP,
 		},
 		{
 			fn:       netstat.UDP6Socks,
-			protocol: "UDP",
+			protocol: types.ProtocolUDP,
 		},
 		{
 			fn:       netstat.TCPSocks,
-			protocol: "TCP",
+			protocol: types.ProtocolTCP,
 		},
 		{
 			fn:       netstat.TCP6Socks,
-			protocol: "TCP",
+			protocol: types.ProtocolTCP,
 		},
 	}
 	for _, s := range socks {

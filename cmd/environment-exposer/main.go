@@ -68,7 +68,6 @@ func main() {
 		fmt.Println("Failed to Kubernetes ersion", err)
 		return
 	}
-	fmt.Println("Kubernetes Version", kVersion.Major, kVersion.Minor)
 	kVersionMajor, err := strconv.Atoi(kVersion.Major)
 	if err != nil {
 		fmt.Println("Failed to convert Kubernetes major version to int", err)
@@ -111,6 +110,10 @@ func main() {
 		}
 		fmt.Println("v1.Service", svc)
 		err = k.CreateOrUpdateService(svc)
+
+		if l.Protocol != types.ProtocolTCP {
+			continue
+		}
 		if kVersionMajor == 1 && kVersionMinor > 18 {
 			fmt.Println("networkingv1.Ingress", ing)
 			err = k.CreateOrUpdateIngress(ing)
