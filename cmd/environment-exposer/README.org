@@ -3,7 +3,9 @@
 Exposes processes exported by environment-exporter as Kubernetes Service and Ingress resources.
 
 * Configuration
-| Name                    | Default                                     | Description                                       |
-|-------------------------+---------------------------------------------+---------------------------------------------------|
-| ~APP_EXPORTER_ENDPOINT~ | =http://environment-exporter.default:10093= | The endpoint for environment-exporter             |
-| ~APP_EXTERNAL_IP~       | =""=                                        | The IP which the Pair instance is accessible from |
+| Name                          | Default                                     | Description                                                                             |
+|-------------------------------+---------------------------------------------+-----------------------------------------------------------------------------------------|
+| ~APP_EXPORTER_ENDPOINT~       | =http://environment-exporter.default:10093= | The endpoint for environment-exporter                                                   |
+| ~APP_EXTERNAL_IP~             | =""=                                        | The IP which the Pair instance is accessible from                                       |
+| ~APP_ENVIRONMENT_NAMESPACE~   | =default=                                   | The namespace where Environment is deployed                                             |
+| ~APP_ENVIRONMENT_BASE_DOMAIN~ | =_.pair.sharing.io=                         | The DNS base domain assigned to the Pair instance (e.g: mycoolinstance.pair.sharing.io) |

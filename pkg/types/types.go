@@ -58,3 +58,5 @@ const (
 
 const IPAllInterfaces = "0.0.0.0"
 const IPv6AllInterfaces = "::"
+
+var ResourceLabels = map[string]string{"io.sharing.pair/managed": "true"}

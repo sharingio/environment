@@ -50,6 +50,20 @@ func GetAppExporterEndpoint() (output string) {
 	return GetEnvOrDefault("APP_EXPORTER_ENDPOINT", "http://environment-exporter.default:10093")
 }
 
+// GetAppEnvironmentNamespace ...
+// the namespace where Environment is deployed
+// this is only used in the exposer
+func GetAppEnvironmentNamespace() (output string) {
+	return GetEnvOrDefault("APP_ENVIRONMENT_NAMESPACE", "default")
+}
+
+// GetAppEnvironmentBaseDomain ...
+// the base domain to create ingresses with
+// this is only used in the exposer
+func GetAppEnvironmentBaseDomain() (output string) {
+	return GetEnvOrDefault("APP_ENVIRONMENT_BASE_DOMAIN", GetEnvOrDefault("SHARINGIO_PAIR_BASE_DNS_NAME", "_.pair.sharing.io"))
+}
+
 // GetPodName ...
 // the name of the Pod
 // this is only used in the exporter
