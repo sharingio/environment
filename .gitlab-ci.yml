@@ -62,14 +62,14 @@ variables:
   if [ -n "$CI_COMMIT_TAG" ]; then
     export BRANCH_NAME=""
     export IMAGE_TAG="$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG/${APP}"
-    export CONTAINER_EXTRA_DESTINATION="-t $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG/${APP}"
+    export CONTAINER_EXTRA_DESTINATION="-t $CI_REGISTRY_IMAGE/${APP}:$CI_COMMIT_TAG"
   fi
 
 .build: &build |
   img build \
     -f $CI_PROJECT_DIR/${APP}.Dockerfile \
     $CONTAINER_EXTRA_DESTINATION \
-    -t $CI_REGISTRY_IMAGE:$BASE_TAG$BRANCH_NAME \
+    -t $CI_REGISTRY_IMAGE/${APP}:$BASE_TAG$BRANCH_NAME \
     --platform $PLATFORMS \
     $CI_PROJECT_DIR
 
