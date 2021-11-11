@@ -120,7 +120,6 @@ func ListListeningProcesses() (processes []types.Process, err error) {
 		if err != nil {
 			return []types.Process{}, err
 		}
-		fmt.Println(processSockList)
 		for _, p := range processSockList {
 			process, err := NewProcessForSockTabEntry(p, types.Process{Protocol: s.protocol})
 			if err != nil {
