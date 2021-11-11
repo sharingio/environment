@@ -63,9 +63,9 @@ func NewProcessForSockTabEntry(sock netstat.SockTabEntry, overrides types.Proces
 		return types.Process{}, err
 	}
 
-	allowedPorts := GetPortsListFromString(string(types.EnvironmentVariableNameSharingioPairIngressReconcilerAllowedPorts))
-	disabledPorts := GetPortsListFromString(string(types.EnvironmentVariableNameSharingioPairIngressReconcilerDisabledPorts))
-	disabled, _ := strconv.ParseBool(env[string(types.EnvironmentVariableNameSharingioPairExposerDisabled)])
+	allowedPorts := GetPortsListFromString(string(types.EnvVarNameSharingioPairIngressReconcilerAllowedPorts))
+	disabledPorts := GetPortsListFromString(string(types.EnvVarNameSharingioPairIngressReconcilerDisabledPorts))
+	disabled, _ := strconv.ParseBool(env[string(types.EnvVarNameSharingioPairExposerDisabled)])
 
 	process = types.Process{
 		Name:          sock.Process.Name,
@@ -74,7 +74,7 @@ func NewProcessForSockTabEntry(sock netstat.SockTabEntry, overrides types.Proces
 		Uid:           sock.UID,
 		IP:            sock.LocalAddr.IP,
 		Port:          sock.LocalAddr.Port,
-		Hostname:      env[string(types.EnvironmentVariableNameSharingioPairSetHostname)],
+		Hostname:      env[string(types.EnvVarNameSharingioPairSetHostname)],
 		AllowedPorts:  allowedPorts,
 		DisabledPorts: disabledPorts,
 		Disabled:      disabled,

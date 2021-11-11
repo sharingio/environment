@@ -27,15 +27,15 @@ type Process struct {
 	IngressHost  string            `json:"-"`
 }
 
-type EnvironmentVariableName string
+type EnvVarName string
 
 // TODO shorten to EnvVarName ...
 // TODO rename to SHARINGIO_PAIR_EXPOSER ...
 const (
-	EnvironmentVariableNameSharingioPairSetHostname                    EnvironmentVariableName = "SHARINGIO_PAIR_SET_HOSTNAME"
-	EnvironmentVariableNameSharingioPairExposerDisabled                EnvironmentVariableName = "SHARINGIO_PAIR_EXPOSER_DISABLED"
-	EnvironmentVariableNameSharingioPairIngressReconcilerAllowedPorts  EnvironmentVariableName = "SHARINGIO_PAIR_INGRESS_RECONCILER_ALLOWED_PORTS"
-	EnvironmentVariableNameSharingioPairIngressReconcilerDisabledPorts EnvironmentVariableName = "SHARINGIO_PAIR_INGRESS_RECONCILER_DISABLED_PORTS"
+	EnvVarNameSharingioPairSetHostname                    EnvVarName = "SHARINGIO_PAIR_SET_HOSTNAME"
+	EnvVarNameSharingioPairExposerDisabled                EnvVarName = "SHARINGIO_PAIR_EXPOSER_DISABLED"
+	EnvVarNameSharingioPairIngressReconcilerAllowedPorts  EnvVarName = "SHARINGIO_PAIR_INGRESS_RECONCILER_ALLOWED_PORTS"
+	EnvVarNameSharingioPairIngressReconcilerDisabledPorts EnvVarName = "SHARINGIO_PAIR_INGRESS_RECONCILER_DISABLED_PORTS"
 )
 
 type TemplateYamlFile string
