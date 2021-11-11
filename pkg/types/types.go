@@ -46,4 +46,5 @@ const (
 	TemplateYamlFileIngressV118OrEarlier TemplateYamlFile = "ingress-v1.18-or-earlier.yaml"
 )
 
-const IPAllInterfaces = "::"
+const IPAllInterfaces = "0.0.0.0"
+const IPv6AllInterfaces = "::"
