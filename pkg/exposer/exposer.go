@@ -3,9 +3,9 @@ package exposer
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/sharingio/environment/pkg/common"
 	k "github.com/sharingio/environment/pkg/kubernetes"
@@ -14,7 +14,6 @@ import (
 	v1 "k8s.io/api/core/v1"
 	networkingv1 "k8s.io/api/networking/v1"
 	networkingv1beta1 "k8s.io/api/networking/v1beta1"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/client-go/kubernetes"
@@ -23,22 +22,25 @@ import (
 var resourceLabelSelector = labels.SelectorFromSet(types.ResourceLabels).String()
 
 type Exposer struct {
-	ExporterEndpoint  string
-	IngressBaseDomain string
-	Clientset         *kubernetes.Clientset
+	ExporterEndpoint       string
+	IngressBaseDomain      string
+	ReconciliationInterval time.Duration
+	Clientset              *kubernetes.Clientset
 }
 
 func NewExposer() (exposer *Exposer, err error) {
+	exporterEndpoint := common.GetAppExporterEndpoint()
+	ingressBaseDomain := common.GetAppEnvironmentBaseDomain()
+	reconciliationInterval := common.GetAppReconciliationInterval()
 	clientset, err := k.NewClient()
 	if err != nil {
 		return nil, err
 	}
-	exporterEndpoint := common.GetAppExporterEndpoint()
-	ingressBaseDomain := common.GetAppEnvironmentBaseDomain()
 	return &Exposer{
-		Clientset:         clientset,
-		ExporterEndpoint:  exporterEndpoint,
-		IngressBaseDomain: ingressBaseDomain,
+		ExporterEndpoint:       exporterEndpoint,
+		IngressBaseDomain:      ingressBaseDomain,
+		ReconciliationInterval: reconciliationInterval,
+		Clientset:              clientset,
 	}, nil
 }
 
@@ -172,24 +174,24 @@ func (r ResourceManager) PruneUnusedIngressesV1beta1(names []string) (deletedNam
 // TODO implement update
 func (r ResourceManager) CreateOrUpdateService(service *v1.Service) (err error) {
 	_, err = r.clientset.CoreV1().Services(r.Namespace).Create(context.TODO(), service, metav1.CreateOptions{})
-	if err != nil && apierrors.IsAlreadyExists(err) == false {
-		return fmt.Errorf("Error creating Service, %v", err.Error())
+	if err != nil {
+		return err
 	}
 	return nil
 }
 
 func (r ResourceManager) CreateOrUpdateIngress(ingress *networkingv1.Ingress) (err error) {
 	_, err = r.clientset.NetworkingV1().Ingresses(r.Namespace).Create(context.TODO(), ingress, metav1.CreateOptions{})
-	if err != nil && apierrors.IsAlreadyExists(err) == false {
-		return fmt.Errorf("Error creating Ingress, %v", err.Error())
+	if err != nil {
+		return err
 	}
 	return nil
 }
 
 func (r ResourceManager) CreateOrUpdateIngressV1beta1(ingress *networkingv1beta1.Ingress) (err error) {
 	_, err = r.clientset.NetworkingV1beta1().Ingresses(r.Namespace).Create(context.TODO(), ingress, metav1.CreateOptions{})
-	if err != nil && apierrors.IsAlreadyExists(err) == false {
-		return fmt.Errorf("Error creating Ingress, %v", err.Error())
+	if err != nil {
+		return err
 	}
 	return nil
 }

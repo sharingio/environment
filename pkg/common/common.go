@@ -1,10 +1,13 @@
 package common
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
 )
 
 // GetEnvOrDefault ...
@@ -62,6 +65,24 @@ func GetAppEnvironmentNamespace() (output string) {
 // this is only used in the exposer
 func GetAppEnvironmentBaseDomain() (output string) {
 	return GetEnvOrDefault("APP_ENVIRONMENT_BASE_DOMAIN", GetEnvOrDefault("SHARINGIO_PAIR_BASE_DNS_NAME", "_.pair.sharing.io"))
+}
+
+// GetAppReconciliationInterval ...
+// the base domain to create ingresses with
+// this is only used in the exposer
+func GetAppReconciliationInterval() (seconds time.Duration) {
+	defaultSeconds := time.Duration(2 * time.Second)
+	secondsString := GetEnvOrDefault("APP_RECONCILIATION_INTERVAL", fmt.Sprintf("%v", defaultSeconds.Seconds()))
+	secondsInt, err := strconv.Atoi(secondsString)
+	seconds = time.Duration(secondsInt) * time.Second
+	if err != nil {
+		log.Printf("Failed to convert string to int: %v\n", err)
+	}
+	if seconds <= 0 {
+		seconds = defaultSeconds
+	}
+	log.Printf("Will sleep for %v seconds per iteration", seconds.Seconds())
+	return seconds
 }
 
 // GetPodName ...
