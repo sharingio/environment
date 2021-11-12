@@ -74,6 +74,7 @@ variables:
 
 .build-img: &build-img |
   docker buildx build \
+    --push \
     -f $CI_PROJECT_DIR/${APP}.Dockerfile \
     $CONTAINER_EXTRA_DESTINATION \
     -t $CI_REGISTRY_IMAGE/${APP}:$BASE_TAG$BRANCH_NAME \
