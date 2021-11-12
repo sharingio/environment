@@ -1,0 +1,163 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: environment
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: environment
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: environment
+    namespace: default
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: environment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: environment
+  serviceName: environment
+  template:
+    metadata:
+      labels:
+        app: environment
+    spec:
+      shareProcessNamespace: true
+      containers:
+        - command:
+            - pair-init.sh
+          env:
+            - name: TMATE_SOCKET
+              value: /tmp/pair.default.target.iisocket
+            - name: TZ
+              value: Pacific/Auckland
+            - name: GIT_COMMITTER_EMAIL
+              value: my@email.com
+            - name: GIT_COMMITTER_NAME
+              value: My Name
+            - name: GIT_AUTHOR_EMAIL
+              value: my@email.com
+            - name: GIT_AUTHOR_NAME
+              value: My Name
+            - name: INIT_DEFAULT_REPOS_FOLDER
+              value: /home/ii
+            - name: INIT_DEFAULT_REPOS
+              value:
+                https://github.com/ii/org https://github.com/sharingio/environment
+                https://github.com/sharingio/pair https://github.com/humacs/humacs
+            - name: INIT_DEFAULT_DIR
+              value: /home/ii
+            - name: INIT_ORG_FILE
+              value: /home/ii
+            - name: INIT_PREFINISH_BLOCK
+              value: |
+                git clone "https://github.com/myusername/.sharing.io" || \
+                  git clone https://github.com/sharingio/.sharing.io
+
+                . /home/ii/.sharing.io/sharingio-pair-preinit-script.sh
+            - name: SHARINGIO_PAIR_NAME
+              value: myusername
+            - name: SHARINGIO_PAIR_USER
+              value: myusername
+            - name: SHARINGIO_PAIR_GUEST_NAMES
+              value: ""
+            - name: SHARINGIO_PAIR_KUBERNETES_CONTROLPLANE_ENDPOINT
+              value: 127.0.0.1
+            - name: SHARINGIO_PAIR_LOAD_BALANCER_IP
+              value: 127.0.0.1
+            - name: PAIR_ENVIRONMENT_DEBUG
+              value: "true"
+            - name: REINIT_HOME_FOLDER
+              value: "true"
+            - name: SHARINGIO_PAIR_BASE_DNS_NAME
+              value: myusername.pair.sharing.io
+            - name: GITHUB_TOKEN
+              value: fancy_token_here
+            - name: MULTIPLEX_URL
+              value: https://multiplex.myusername.pair.sharing.io
+          image: registry.gitlab.com/sharingio/environment:2021.11.12.1705
+          imagePullPolicy: IfNotPresent
+          name: environment
+          volumeMounts:
+            - mountPath: /var/run/docker.sock
+              name: var-run-docker-sock
+            - mountPath: /tmp
+              name: tmp
+            - mountPath: /home/ii
+              name: home-ii
+            - mountPath: /var/run/host
+              name: host
+        - name: environment-exporter
+          image: registry.gitlab.com/sharingio/environment/exporter:2021.11.12.1705
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: APP_PORT
+              value: ":10093"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+          ports:
+            - containerPort: 10093
+              name: exporter
+          volumeMounts:
+            - name: podlabels
+              mountPath: /etc/podlabels
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      restartPolicy: Always
+      serviceAccount: environment
+      serviceAccountName: environment
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - hostPath:
+            path: /var/run/docker.sock
+            type: Socket
+          name: var-run-docker-sock
+        - hostPath:
+            path: /tmp
+            type: ""
+          name: tmp
+        - name: home-ii
+          emptyDir: {}
+        - hostPath:
+            path: /
+            type: ""
+          name: host
+        - name: podlabels
+          downwardAPI:
+            items:
+              - path: "labels"
+                fieldRef:
+                  fieldPath: metadata.labels
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: environment-exporter
+  namespace: default
+spec:
+  ports:
+    - name: exporter
+      port: 10093
+      protocol: TCP
+      targetPort: 10093
+  selector:
+    app: environment
+  type: ClusterIP
