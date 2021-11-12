@@ -3,6 +3,9 @@ stages:
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
   PLATFORMS: linux/amd64,linux/arm64
 
 # Kaniko
@@ -47,8 +50,12 @@ variables:
 # Img
 .container-build-pre-script: &container-build-pre-script |
   set -x
-  apk add --no-cache img
-  img login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
+  mkdir -p $HOME/.docker/cli-plugins
+  wget -O $HOME/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.5.1/buildx-v0.5.1.linux-amd64
+  chmod +x $HOME/.docker/cli-plugins/docker-buildx
+  docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+  docker buildx create --use --name builder
+  docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
 .declare-extra-destinations-img: &declare-extra-destinations-img |
   if [[ ! "$CI_COMMIT_BRANCH" = "$CI_DEFAULT_BRANCH" ]] && [[ -z "$CI_COMMIT_TAG" ]]; then
@@ -66,7 +73,7 @@ variables:
   fi
 
 .build-img: &build-img |
-  img build \
+  docker buildx build \
     -f $CI_PROJECT_DIR/${APP}.Dockerfile \
     $CONTAINER_EXTRA_DESTINATION \
     -t $CI_REGISTRY_IMAGE/${APP}:$BASE_TAG$BRANCH_NAME \
@@ -89,10 +96,12 @@ build-exporter:
   stage: build
   timeout: 5h
   image:
-    name: docker.io/alpine:3.14
+    name: docker.io/docker:stable
     entrypoint: [""]
   variables:
     APP: exporter
+  services:
+    - docker:dind
   retry: 2
   before_script:
     - *container-build-pre-script
@@ -104,10 +113,12 @@ build-exposer:
   stage: build
   timeout: 5h
   image:
-    name: docker.io/alpine:3.14
+    name: docker.io/docker:stable
     entrypoint: [""]
   variables:
     APP: exposer
+  services:
+    - docker:dind
   retry: 2
   before_script:
     - *container-build-pre-script
