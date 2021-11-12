@@ -97,5 +97,4 @@ spec:
         - name: template-folder
           hostPath:
             path: /home/ii/.sharing.io/cluster-api/exposer/templates
-
 #+end_src

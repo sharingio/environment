@@ -72,14 +72,6 @@ fi
     eval "$INIT_PREFINISH_BLOCK"
 )
 
-(
-    cd /etc/service
-    for SVC in $(find . -type f -name 'run' | xargs -I {} dirname {}); do
-        mkdir -p "${SVC}"/supervise
-    done
-)
-runsvdir /etc/service &
-
 # This background process will ensure tmate attach commands
 # call osc52-tmate.sh to set the ssh/web uri for this session via osc52
 # We need to wait's until the socket exists, and tmate is ready for commands

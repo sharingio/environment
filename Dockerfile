@@ -88,7 +88,6 @@ RUN DEBIAN_FRONTEND=noninteractive \
     awscli \
     expect \
     graphviz \
-    runit \
     ssh-import-id \
     bsdmainutils \
     netcat \
@@ -101,8 +100,6 @@ RUN mkdir -p /etc/sudoers.d && \
   echo "%sudo    ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo && \
   useradd -m -G users,sudo -u 1000 -s /bin/bash ii && \
   chmod 0775 /usr/local/lib && chgrp users /usr/local/lib && \
-  chmod 0770 -R /etc/service/ && \
-  chgrp -R users /etc/service/ && \
   mkdir /usr/local/lib/node_modules && \
   chown -R ii:ii /usr/local/lib/node_modules /var/local
 
