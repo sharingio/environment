@@ -38,7 +38,7 @@ func main() {
 
 	kVersion, err := e.Clientset.DiscoveryClient.ServerVersion()
 	if err != nil {
-		log.Println("Failed to Kubernetes ersion", err)
+		log.Println("Failed to Kubernetes version", err)
 		return
 	}
 	kVersionMajor, err := strconv.Atoi(kVersion.Major)
