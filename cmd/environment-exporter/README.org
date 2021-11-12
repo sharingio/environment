@@ -56,7 +56,7 @@ will return contents like this
 * Deployment example
 Note that when running in Kubernetes, the field =shareProcessNamespace= in =v1.Pod.Spec= must be set to =true=.
 
-#+begin_src yaml :tangle ../../example.yaml
+#+begin_src yaml :tangle ../../environment-exporter-example.yaml
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
