@@ -13,6 +13,12 @@ import (
 	l "github.com/sharingio/environment/pkg/listening-processes"
 )
 
+var (
+	AppBuildVersion = "0.0.0"
+	AppBuildHash    = "???"
+	AppBuildDate    = "yyyy.mm.dd HH:MM"
+)
+
 func getListenRoute(w http.ResponseWriter, r *http.Request) {
 	listening, err := l.ListListeningProcesses()
 	if err != nil {
@@ -26,6 +32,7 @@ func getListenRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	log.Printf("launching sharingio/environment:exporter (%v, %v, %v)\n", AppBuildVersion, AppBuildHash, AppBuildDate)
 	envFile := common.GetAppEnvFile()
 	_ = godotenv.Load(envFile)
 	port := common.GetAppPort()

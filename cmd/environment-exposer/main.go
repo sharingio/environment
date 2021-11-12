@@ -12,10 +12,21 @@ import (
 	"github.com/sharingio/environment/pkg/templates"
 	"github.com/sharingio/environment/pkg/types"
 
+	"github.com/joho/godotenv"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 )
 
+var (
+	AppBuildVersion = "0.0.0"
+	AppBuildHash    = "???"
+	AppBuildDate    = "yyyy.mm.dd HH:MM"
+)
+
 func main() {
+	log.Printf("launching sharingio/environment:exposer (%v, %v, %v)\n", AppBuildVersion, AppBuildHash, AppBuildDate)
+
+	envFile := common.GetAppEnvFile()
+	_ = godotenv.Load(envFile)
 	e, err := exposer.NewExposer()
 	if err != nil {
 		log.Println("Failed to get NewExposer", err)
