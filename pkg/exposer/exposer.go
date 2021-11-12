@@ -68,9 +68,6 @@ func (e *Exposer) GetListening() (listening []types.Process, err error) {
 	return listening, nil
 }
 
-// NOTE listOptions include a labelSelector as "io.sharing.pair/managed=true"
-// NOTE serviceName must be {name}-{port} (not ServicePort)
-
 type ResourceManager struct {
 	Namespace string
 	clientset *kubernetes.Clientset
@@ -87,26 +84,89 @@ func (r ResourceManager) GetServices() (services *v1.ServiceList, err error) {
 	return services, err
 }
 
-func (r ResourceManager) GetIngress() (ingresses *networkingv1.IngressList, err error) {
+func (r ResourceManager) GetIngresses() (ingresses *networkingv1.IngressList, err error) {
 	ingresses, err = r.clientset.NetworkingV1().Ingresses(r.Namespace).List(context.TODO(), metav1.ListOptions{LabelSelector: resourceLabelSelector})
 	return ingresses, nil
 }
 
-func (r ResourceManager) GetIngressV1Beta1() (ingresses *networkingv1beta1.IngressList, err error) {
+func (r ResourceManager) GetIngressesV1beta1() (ingresses *networkingv1beta1.IngressList, err error) {
 	ingresses, err = r.clientset.NetworkingV1beta1().Ingresses(r.Namespace).List(context.TODO(), metav1.ListOptions{LabelSelector: resourceLabelSelector})
 	return ingresses, nil
 }
 
-func (r ResourceManager) PruneUnusedServices() (err error) {
-	return nil
+func (r ResourceManager) PruneUnusedServices(names []string) (deletedNames []string, err error) {
+	services, err := r.GetServices()
+	if err != nil {
+		return []string{}, err
+	}
+	for _, service := range services.Items {
+		nameFoundInServiceList := false
+		for _, name := range names {
+			if name == service.ObjectMeta.Name {
+				nameFoundInServiceList = true
+			}
+		}
+		if nameFoundInServiceList == false {
+			deletedNames = append(deletedNames, service.ObjectMeta.Name)
+		}
+	}
+	for _, name := range deletedNames {
+		err = r.clientset.CoreV1().Services(r.Namespace).Delete(context.TODO(), name, metav1.DeleteOptions{})
+		if err != nil {
+			return []string{}, err
+		}
+	}
+	return deletedNames, nil
 }
 
-func (r ResourceManager) PruneUnusedIngresses() (err error) {
-	return nil
+func (r ResourceManager) PruneUnusedIngresses(names []string) (deletedNames []string, err error) {
+	ingresses, err := r.GetIngresses()
+	if err != nil {
+		return []string{}, err
+	}
+	for _, ingress := range ingresses.Items {
+		nameFoundInIngressList := false
+		for _, name := range names {
+			if name == ingress.ObjectMeta.Name {
+				nameFoundInIngressList = true
+			}
+		}
+		if nameFoundInIngressList == false {
+			deletedNames = append(deletedNames, ingress.ObjectMeta.Name)
+		}
+	}
+	for _, name := range deletedNames {
+		err = r.clientset.NetworkingV1().Ingresses(r.Namespace).Delete(context.TODO(), name, metav1.DeleteOptions{})
+		if err != nil {
+			return []string{}, err
+		}
+	}
+	return deletedNames, nil
 }
 
-func (r ResourceManager) PruneUnusedIngressesV1Beta1() (err error) {
-	return nil
+func (r ResourceManager) PruneUnusedIngressesV1beta1(names []string) (deletedNames []string, err error) {
+	ingresses, err := r.GetIngresses()
+	if err != nil {
+		return []string{}, err
+	}
+	for _, ingress := range ingresses.Items {
+		nameFoundInIngressList := false
+		for _, name := range names {
+			if name == ingress.ObjectMeta.Name {
+				nameFoundInIngressList = true
+			}
+		}
+		if nameFoundInIngressList == false {
+			deletedNames = append(deletedNames, ingress.ObjectMeta.Name)
+		}
+	}
+	for _, name := range deletedNames {
+		err = r.clientset.NetworkingV1beta1().Ingresses(r.Namespace).Delete(context.TODO(), name, metav1.DeleteOptions{})
+		if err != nil {
+			return []string{}, err
+		}
+	}
+	return deletedNames, nil
 }
 
 // TODO implement update

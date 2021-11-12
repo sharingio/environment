@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/sharingio/environment/pkg/common"
 	"github.com/sharingio/environment/pkg/exposer"
@@ -41,8 +42,11 @@ func main() {
 		fmt.Println("Failed to GetListening", err)
 		return
 	}
+	var listeningNames []string
 
 	for _, l := range listening {
+		listeningNames = append(listeningNames, l.Name)
+
 		l.ServiceName = l.Name
 		// ofset the number to ensure ports like 80 or 443 aren't overtaken if locally bound
 		l.ServicePort = l.Port
@@ -67,7 +71,6 @@ func main() {
 		if err != nil {
 			fmt.Printf("Failed to render Ingress: %v\n", err)
 		}
-		fmt.Println("v1.Service", svc)
 		err = rm.CreateOrUpdateService(&svc)
 		if err != nil {
 			fmt.Printf("Failed to create Service: %v\n", err)
@@ -77,14 +80,11 @@ func main() {
 			continue
 		}
 		if kVersionMajor == 1 && kVersionMinor > 18 {
-			fmt.Println("networkingv1.Ingress", ing)
 			err = rm.CreateOrUpdateIngress(&ing)
 			if err != nil {
 				fmt.Printf("Failed to create Ingress: %v\n", err)
 			}
-		}
-		if kVersionMajor == 1 && kVersionMinor <= 18 {
-			fmt.Println("networkingv1beta1.Ingress", ingv1beta1)
+		} else if kVersionMajor == 1 && kVersionMinor <= 18 {
 			err = rm.CreateOrUpdateIngressV1beta1(&ingv1beta1)
 			if err != nil {
 				fmt.Printf("Failed to create Ingress v1beta1: %v\n", err)
@@ -92,5 +92,29 @@ func main() {
 		}
 	}
 
+	deleted, err := rm.PruneUnusedServices(listeningNames)
+	if err != nil {
+		fmt.Printf("Failed to prune unused Services: %v\n", err)
+	}
+	if len(deleted) > 0 {
+		fmt.Printf("Deleted Services %v\n", strings.Join(deleted, ", "))
+	}
+	if kVersionMajor == 1 && kVersionMinor > 18 {
+		deleted, err = rm.PruneUnusedIngresses(listeningNames)
+		if err != nil {
+			fmt.Printf("Failed to prune unused Ingresses: %v\n", err)
+		}
+		if len(deleted) > 0 {
+			fmt.Printf("Deleted Ingresses %v\n", strings.Join(deleted, ", "))
+		}
+	} else if kVersionMajor == 1 && kVersionMinor <= 18 {
+		deleted, err = rm.PruneUnusedIngressesV1beta1(listeningNames)
+		if err != nil {
+			fmt.Printf("Failed to prune unused Ingresses v1beta1: %v\n", err)
+		}
+		if len(deleted) > 0 {
+			fmt.Printf("Deleted Ingresses v1beta1 %v\n", strings.Join(deleted, ", "))
+		}
+	}
 	// TODO prune unused services
 }
