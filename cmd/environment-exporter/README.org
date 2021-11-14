@@ -1,6 +1,6 @@
 #+TITLE: environment-exporter
 
-Exports a JSON list of processes and env vars that are listening on ports at :10093/listening
+A webserver for serving a JSON list of processes that are listening on ports.
 
 * Configuration
 Environment variables to configure the exporter
@@ -24,30 +24,42 @@ will return contents like this
 [
   {
     "name": "go-http-server",
-    "pid": 995234,
+    "protocol": "TCP",
+    "pid": 234583,
     "uid": 1000,
-    "localAddr": {
-      "IP": "::",
-      "Port": 8080
-    },
-    "env": {
-      "SHARINGIO_PAIR_INGRESS_RECONCILER_ALLOWED_PORTS": "",
-      "SHARINGIO_PAIR_INGRESS_RECONCILER_DISABLED_PORTS": "",
-      "SHARINGIO_PAIR_SET_HOSTNAME": "hii"
+    "ip": "::",
+    "port": 8080,
+    "hostname": "",
+    "allowedPorts": null,
+    "disabledPorts": null,
+    "disabled": false,
+    "podName": "bobymcbobs-humacs-0",
+    "podNamespace": "bobymcbobs",
+    "podLabels": {
+      "app.kubernetes.io/instance": "bobymcbobs",
+      "app.kubernetes.io/name": "humacs",
+      "controller-revision-hash": "bobymcbobs-humacs-645d7cc496",
+      "statefulset.kubernetes.io/pod-name": "bobymcbobs-humacs-0"
     }
   },
   {
     "name": "go-http-server",
-    "pid": 995234,
+    "protocol": "TCP",
+    "pid": 234583,
     "uid": 1000,
-    "localAddr": {
-      "IP": "::",
-      "Port": 2112
-    },
-    "env": {
-      "SHARINGIO_PAIR_INGRESS_RECONCILER_ALLOWED_PORTS": "",
-      "SHARINGIO_PAIR_INGRESS_RECONCILER_DISABLED_PORTS": "",
-      "SHARINGIO_PAIR_SET_HOSTNAME": "hii"
+    "ip": "::",
+    "port": 2112,
+    "hostname": "",
+    "allowedPorts": null,
+    "disabledPorts": null,
+    "disabled": false,
+    "podName": "bobymcbobs-humacs-0",
+    "podNamespace": "bobymcbobs",
+    "podLabels": {
+      "app.kubernetes.io/instance": "bobymcbobs",
+      "app.kubernetes.io/name": "humacs",
+      "controller-revision-hash": "bobymcbobs-humacs-645d7cc496",
+      "statefulset.kubernetes.io/pod-name": "bobymcbobs-humacs-0"
     }
   }
 ]
