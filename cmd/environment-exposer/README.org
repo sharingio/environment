@@ -1,6 +1,6 @@
 #+TITLE: environment-exposer
 
-Exposes processes exported by environment-exporter as Kubernetes Service and Ingress resources.
+A controller for mananging Kubernetes Service and Ingress resources based on the the results of environment-exporter, in order to expose the ports inside Environment to the public internet.
 
 * Configuration
 | Name                          | Default                                     | Description                                                                             |
