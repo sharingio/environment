@@ -10,8 +10,8 @@ import (
 	"time"
 )
 
-// GetEnvOrDefault ...
-// return env value or default to value
+// GetEnvOrDefault
+// returns env value or default to value
 func GetEnvOrDefault(envName string, defaultValue string) (output string) {
 	output = os.Getenv(envName)
 	if output == "" {
@@ -20,55 +20,55 @@ func GetEnvOrDefault(envName string, defaultValue string) (output string) {
 	return output
 }
 
-// GetAppEnvFile ...
+// GetAppEnvFile -
 // location of an env file to load
 func GetAppEnvFile() (output string) {
 	return GetEnvOrDefault("APP_ENV_FILE", ".env")
 }
 
-// GetAppPort ...
+// GetAppPort -
 // the port to bind to
 func GetAppPort() (output string) {
 	return GetEnvOrDefault("APP_PORT", "localhost:10093")
 }
 
-// GetPodLabelsFilePath ...
+// GetPodLabelsFilePath -
 // the path to a downward API generated file containing the defined Pod labels
 func GetPodLabelsFilePath() (output string) {
 	return GetEnvOrDefault("APP_POD_LABELS_FILE_PATH", "/etc/podlabels/labels")
 }
 
-// GetAppExternalIP
-// the externalIP for the cluster
+// GetAppExternalIP -
+// the externalIP for the cluster,
 // this is only used in exposer
 func GetAppExternalIP() (output string) {
 	return GetEnvOrDefault("APP_EXTERNAL_IP", GetEnvOrDefault("SHARINGIO_PAIR_LOAD_BALANCER_IP", ""))
 }
 
-// GetAppExporterEndpoint
+// GetAppExporterEndpoint -
 // the HTTP URI for the exporter
-// e.g: http://environment-exporter.default:10093
+// e.g: http://environment-exporter.default:10093,
 // this is only used in exposer
 func GetAppExporterEndpoint() (output string) {
 	return GetEnvOrDefault("APP_EXPORTER_ENDPOINT", "http://environment-exporter.default:10093")
 }
 
-// GetAppEnvironmentNamespace ...
-// the namespace where Environment is deployed
+// GetAppEnvironmentNamespace -
+// the namespace where Environment is deployed,
 // this is only used in the exposer
 func GetAppEnvironmentNamespace() (output string) {
 	return GetEnvOrDefault("APP_ENVIRONMENT_NAMESPACE", "default")
 }
 
-// GetAppEnvironmentBaseDomain ...
-// the base domain to create ingresses with
+// GetAppEnvironmentBaseDomain -
+// the base domain to create ingresses with,
 // this is only used in the exposer
 func GetAppEnvironmentBaseDomain() (output string) {
 	return GetEnvOrDefault("APP_ENVIRONMENT_BASE_DOMAIN", GetEnvOrDefault("SHARINGIO_PAIR_BASE_DNS_NAME", "_.pair.sharing.io"))
 }
 
-// GetAppReconciliationInterval ...
-// the base domain to create ingresses with
+// GetAppReconciliationInterval -
+// the base domain to create ingresses with,
 // this is only used in the exposer
 func GetAppReconciliationInterval() (seconds time.Duration) {
 	defaultSeconds := time.Duration(2 * time.Second)
@@ -85,14 +85,14 @@ func GetAppReconciliationInterval() (seconds time.Duration) {
 	return seconds
 }
 
-// GetPodName ...
-// the name of the Pod
+// GetPodName -
+// the name of the Pod,
 // this is only used in the exporter
 func GetPodName() (output string) {
 	return GetEnvOrDefault("POD_NAME", GetEnvOrDefault("HOSTNAME", ""))
 }
 
-// Logging ...
+// Logging -
 // basic request logging middleware
 func Logging(next http.Handler) http.Handler {
 	// log all requests
