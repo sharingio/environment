@@ -8,46 +8,6 @@ variables:
   DOCKER_TLS_CERTDIR: ""
   PLATFORMS: linux/amd64,linux/arm64
 
-# Kaniko
-.registry-login: &registry-login |
-  set -x
-  cat << EOF > /kaniko/.docker/config.json
-  {
-    "auths":{
-      "$CI_REGISTRY": {
-        "username":"$CI_REGISTRY_USER",
-        "password":"$CI_REGISTRY_PASSWORD"
-      }
-    }
-  }
-  EOF
-
-.declare-extra-destinations: &declare-extra-destinations |
-  if [[ ! "$CI_COMMIT_BRANCH" = "$CI_DEFAULT_BRANCH" ]] && [[ -z "$CI_COMMIT_TAG" ]]; then
-    export BRANCH_NAME="-$CI_COMMIT_BRANCH"
-  fi
-
-  export BASE_TAG=$(date --date="${CI_COMMIT_TIMESTAMP//[T+]/ }" '+%Y.%m.%d.%H%M')
-  if [[ "$CI_COMMIT_BRANCH" = "$CI_DEFAULT_BRANCH" ]]; then
-    export KANIKO_EXTRA_DESTINATION="--destination $CI_REGISTRY_IMAGE:latest$BRANCH_NAME"
-  fi
-  if [ -n "$CI_COMMIT_TAG" ]; then
-    export BRANCH_NAME=""
-    export IMAGE_TAG="$CI_REGISTRY_IMAGE/humacs:$CI_COMMIT_TAG"
-    export KANIKO_EXTRA_DESTINATION="--destination $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
-  fi
-
-.build: &build |
-  /kaniko/executor \
-    --snapshotMode=redo \
-    --cache=false \
-    --context $CI_PROJECT_DIR \
-    --dockerfile $CI_PROJECT_DIR/Dockerfile \
-    --destination $CI_REGISTRY_IMAGE:$BASE_TAG$BRANCH_NAME \
-    $KANIKO_EXTRA_ARGS \
-    $KANIKO_EXTRA_DESTINATION
-
-# Img
 .container-build-pre-script: &container-build-pre-script |
   set -x
   mkdir -p $HOME/.docker/cli-plugins
@@ -57,7 +17,7 @@ variables:
   docker buildx create --use --name builder
   docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
-.declare-extra-destinations-img: &declare-extra-destinations-img |
+.declare-extra-destinations-img: &declare-extra-destinations |
   if [[ ! "$CI_COMMIT_BRANCH" = "$CI_DEFAULT_BRANCH" ]] && [[ -z "$CI_COMMIT_TAG" ]]; then
     export BRANCH_NAME="-$CI_COMMIT_BRANCH"
   fi
@@ -72,7 +32,7 @@ variables:
     export CONTAINER_EXTRA_DESTINATION="-t $CI_REGISTRY_IMAGE/${APP}:$CI_COMMIT_TAG"
   fi
 
-.build-img: &build-img |
+.build: &build |
   docker buildx build \
     --push \
     -f $CI_PROJECT_DIR/${APP}.Dockerfile \
@@ -81,14 +41,19 @@ variables:
     --platform $PLATFORMS \
     $CI_PROJECT_DIR
 
-build:
+build-environment:
   stage: build
+  timeout: 5h
   image:
-    name: gcr.io/kaniko-project/executor:debug-v1.3.0
+    name: docker.io/docker:stable
     entrypoint: [""]
+  variables:
+    APP: environment
+  services:
+    - docker:dind
   retry: 2
   before_script:
-    - *registry-login
+    - *container-build-pre-script
     - *declare-extra-destinations
   script:
     - *build
@@ -106,9 +71,9 @@ build-exporter:
   retry: 2
   before_script:
     - *container-build-pre-script
-    - *declare-extra-destinations-img
+    - *declare-extra-destinations
   script:
-    - *build-img
+    - *build
 
 build-exposer:
   stage: build
@@ -123,6 +88,6 @@ build-exposer:
   retry: 2
   before_script:
     - *container-build-pre-script
-    - *declare-extra-destinations-img
+    - *declare-extra-destinations
   script:
-    - *build-img
+    - *build
