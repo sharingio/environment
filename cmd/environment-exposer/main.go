@@ -71,6 +71,9 @@ func main() {
 		for _, l := range listening {
 
 			l.ServiceName = fmt.Sprintf("%v-%v", l.Name, l.Port)
+			if l.Hostname != "" {
+				l.ServiceName = l.Hostname
+			}
 			listeningNames = append(listeningNames, l.ServiceName)
 			// ofset the number to ensure ports like 80 or 443 aren't overtaken if locally bound
 			l.ServicePort = l.Port
