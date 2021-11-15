@@ -60,10 +60,12 @@ func main() {
 	}
 
 	for {
+		time.Sleep(time.Duration(e.ReconciliationInterval))
+
 		listening, err := e.GetListening()
 		if err != nil {
 			log.Println("Failed to GetListening", err)
-			return
+			continue
 		}
 		var listeningNames []string
 
