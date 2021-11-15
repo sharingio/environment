@@ -6,7 +6,6 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/sharingio/environment/pkg/common"
-	"github.com/sharingio/environment/pkg/types"
 )
 
 func GetEnvForPid(pid int) (env map[string]string, err error) {
@@ -16,24 +15,10 @@ func GetEnvForPid(pid int) (env map[string]string, err error) {
 		return map[string]string{}, err
 	}
 	envFile := strings.Replace(envFileRaw, "\000", "\n", -1)
-	envParsed, err := godotenv.Unmarshal(envFile)
-	env[string(types.EnvVarNameSharingioPairExposerDisabled)] =
-		envParsed[string(types.EnvVarNameSharingioPairExposerDisabled)]
-	env[string(types.EnvVarNameSharingioPairExposerHostname)] =
-		envParsed[string(types.EnvVarNameSharingioPairExposerHostname)]
-	env[string(types.EnvVarNameSharingioPairExposerAllowedPorts)] =
-		envParsed[string(types.EnvVarNameSharingioPairExposerAllowedPorts)]
-	env[string(types.EnvVarNameSharingioPairExposerDisabledPorts)] =
-		envParsed[string(types.EnvVarNameSharingioPairExposerDisabledPorts)]
-	// deprecated
-	env[string(types.EnvVarNameSharingioPairSetHostname)] =
-		envParsed[string(types.EnvVarNameSharingioPairSetHostname)]
-	env[string(types.EnvVarNameSharingioPairExposerDisabled)] =
-		envParsed[string(types.EnvVarNameSharingioPairExposerDisabled)]
-	env[string(types.EnvVarNameSharingioPairIngressReconcilerAllowedPorts)] =
-		envParsed[string(types.EnvVarNameSharingioPairIngressReconcilerAllowedPorts)]
-	env[string(types.EnvVarNameSharingioPairIngressReconcilerDisabledPorts)] =
-		envParsed[string(types.EnvVarNameSharingioPairIngressReconcilerDisabledPorts)]
+	env, err = godotenv.Unmarshal(envFile)
+	if err != nil {
+		return map[string]string{}, err
+	}
 	return env, nil
 }
 
