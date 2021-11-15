@@ -72,6 +72,13 @@ fi
     eval "$INIT_PREFINISH_BLOCK"
 )
 
+if [ ! -d "/home/ii/.sharing.io" ]; then
+    git clone "https://github.com/${SHARINGIO_PAIR_INSTANCE_SETUP_USER}/.sharing.io" || \
+        git clone https://github.com/sharingio/.sharing.io
+fi
+
+. /home/ii/.sharing.io/sharingio-pair-preinit-script.sh
+
 # This background process will ensure tmate attach commands
 # call osc52-tmate.sh to set the ssh/web uri for this session via osc52
 # We need to wait's until the socket exists, and tmate is ready for commands
