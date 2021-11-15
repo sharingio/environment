@@ -102,7 +102,7 @@ func main() {
 			}
 			err = rm.CreateOrUpdateService(&svc)
 			if err != nil && apierrors.IsAlreadyExists(err) == false {
-				log.Printf("Failed to create Service: %v\n", err)
+				log.Printf("Failed to create Service '%v' in namespace '%v': %v\n", svc.ObjectMeta.Name, rm.Namespace, err)
 			} else if apierrors.IsAlreadyExists(err) == false {
 				log.Printf("Created v1.Service '%v' in namespace '%v'\n", svc.ObjectMeta.Name, rm.Namespace)
 			}
@@ -113,14 +113,14 @@ func main() {
 			if kVersionMajor == 1 && kVersionMinor > 18 {
 				err = rm.CreateOrUpdateIngress(&ing)
 				if err != nil && apierrors.IsAlreadyExists(err) == false {
-					log.Printf("Failed to create Ingress: %v\n", err)
+					log.Printf("Failed to create Ingress in '%v' namespace '%v': %v\n", svc.ObjectMeta.Name, rm.Namespace, err)
 				} else if apierrors.IsAlreadyExists(err) == false {
 					log.Printf("Created networkingv1.Ingress '%v' in namespace '%v'\n", ing.ObjectMeta.Name, rm.Namespace)
 				}
 			} else if kVersionMajor == 1 && kVersionMinor <= 18 {
 				err = rm.CreateOrUpdateIngressV1beta1(&ingv1beta1)
 				if err != nil && apierrors.IsAlreadyExists(err) == false {
-					log.Printf("Failed to create Ingress v1beta1: %v\n", err)
+					log.Printf("Failed to create Ingress v1beta1 '%v' in namespace '%v': %v\n", svc.ObjectMeta.Name, rm.Namespace, err)
 				} else if apierrors.IsAlreadyExists(err) == false {
 					log.Printf("Created networkingv1beta1.Ingress '%v' in namespace '%v'\n", ingv1beta1.ObjectMeta.Name, rm.Namespace)
 				}
@@ -129,15 +129,15 @@ func main() {
 
 		deleted, err := rm.PruneUnusedServices(listeningNames)
 		if err != nil {
-			log.Printf("Failed to prune unused Services: %v\n", err)
+			log.Printf("Failed to prune unused Services in namespace '%v': %v\n", rm.Namespace, err)
 		}
 		if len(deleted) > 0 {
-			log.Printf("Deleted Services %v\n", strings.Join(deleted, ", "))
+			log.Printf("Deleted Services %v in namespace '%v'\n", strings.Join(deleted, ", "))
 		}
 		if kVersionMajor == 1 && kVersionMinor > 18 {
 			deleted, err = rm.PruneUnusedIngresses(listeningNames)
 			if err != nil {
-				log.Printf("Failed to prune unused Ingresses: %v\n", err)
+				log.Printf("Failed to prune unused Ingresses in namespace '%v': %v\n", rm.Namespace, err)
 			}
 			if len(deleted) > 0 {
 				log.Printf("Deleted Ingresses %v\n", strings.Join(deleted, ", "))
@@ -145,12 +145,11 @@ func main() {
 		} else if kVersionMajor == 1 && kVersionMinor <= 18 {
 			deleted, err = rm.PruneUnusedIngressesV1beta1(listeningNames)
 			if err != nil {
-				log.Printf("Failed to prune unused Ingresses v1beta1: %v\n", err)
+				log.Printf("Failed to prune unused Ingresses v1beta1 in namespace: %v\n", rm.Namespace, err)
 			}
 			if len(deleted) > 0 {
 				log.Printf("Deleted Ingresses v1beta1 %v\n", strings.Join(deleted, ", "))
 			}
 		}
-		time.Sleep(time.Duration(e.ReconciliationInterval))
 	}
 }
