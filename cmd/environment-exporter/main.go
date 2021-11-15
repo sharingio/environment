@@ -1,3 +1,10 @@
+/*
+
+environment-exporter
+  A webserver for serving a JSON list of processes that are listening on ports.
+
+*/
+
 package main
 
 import (

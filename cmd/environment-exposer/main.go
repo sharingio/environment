@@ -1,3 +1,10 @@
+/*
+
+environment-exposer
+  A controller for mananging Kubernetes Service and Ingress resources based on the the results of environment-exporter, in order to expose the ports inside Environment to the public internet.
+
+*/
+
 package main
 
 import (
