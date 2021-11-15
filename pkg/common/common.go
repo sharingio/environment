@@ -109,3 +109,12 @@ func ReadFile(name string) (contents string, err error) {
 	}
 	return string(content), nil
 }
+
+func IntInListOfInts(list []int, input int) (included bool) {
+	for _, l := range list {
+		if l == input {
+			return true
+		}
+	}
+	return false
+}

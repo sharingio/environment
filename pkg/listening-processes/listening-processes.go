@@ -2,6 +2,7 @@ package listeningprocesses
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -16,7 +17,7 @@ import (
 type sockFn = func(netstat.AcceptFn) ([]netstat.SockTabEntry, error)
 
 func GetPortsListFromString(portsString string) (ports []int) {
-	portsStrings := strings.Split(portsString, ",")
+	portsStrings := strings.Split(portsString, " ")
 	for _, p := range portsStrings {
 		port, _ := strconv.Atoi(p)
 		if port == 0 {
@@ -56,15 +57,26 @@ func NewProcessForSockTabEntry(sock netstat.SockTabEntry, overrides types.Proces
 	// only include if on all interfaces
 	if !(sock.LocalAddr.IP.String() == string(types.IPAllInterfaces) ||
 		sock.LocalAddr.IP.String() == string(types.IPv6AllInterfaces)) {
-		return types.Process{}, fmt.Errorf("Error: IP (%v) must match all interfaces", sock.LocalAddr.IP.String())
+		return types.Process{}, fmt.Errorf("Warning: IP (%v) must match all interfaces", sock.LocalAddr.IP.String())
 	}
 	env, err := environment.GetEnvForPid(sock.Process.Pid)
 	if err != nil {
 		return types.Process{}, err
 	}
 
-	allowedPorts := GetPortsListFromString(string(types.EnvVarNameSharingioPairIngressReconcilerAllowedPorts))
-	disabledPorts := GetPortsListFromString(string(types.EnvVarNameSharingioPairIngressReconcilerDisabledPorts))
+	// use new env var or deprecated
+	allowedPorts := GetPortsListFromString(env[string(types.EnvVarNameSharingioPairExposerAllowedPorts)])
+	if len(allowedPorts) == 0 {
+		allowedPorts = GetPortsListFromString(env[string(types.EnvVarNameSharingioPairIngressReconcilerAllowedPorts)])
+	}
+	disabledPorts := GetPortsListFromString(env[string(types.EnvVarNameSharingioPairExposerDisabledPorts)])
+	if len(disabledPorts) == 0 {
+		disabledPorts = GetPortsListFromString(env[string(types.EnvVarNameSharingioPairIngressReconcilerDisabledPorts)])
+	}
+	hostname := env[string(types.EnvVarNameSharingioPairExposerHostname)]
+	if hostname == "" {
+		hostname = env[string(types.EnvVarNameSharingioPairSetHostname)]
+	}
 	disabled, _ := strconv.ParseBool(env[string(types.EnvVarNameSharingioPairExposerDisabled)])
 
 	process = types.Process{
@@ -74,7 +86,7 @@ func NewProcessForSockTabEntry(sock netstat.SockTabEntry, overrides types.Proces
 		Uid:           sock.UID,
 		IP:            sock.LocalAddr.IP,
 		Port:          sock.LocalAddr.Port,
-		Hostname:      env[string(types.EnvVarNameSharingioPairSetHostname)],
+		Hostname:      hostname,
 		AllowedPorts:  allowedPorts,
 		DisabledPorts: disabledPorts,
 		Disabled:      disabled,
@@ -118,12 +130,23 @@ func ListListeningProcesses() (processes []types.Process, err error) {
 	for _, s := range socks {
 		processSockList, err = GetProcessFromSockFn(s.fn)
 		if err != nil {
-			return []types.Process{}, err
+			log.Println(err)
+			continue
 		}
+	process:
 		for _, p := range processSockList {
 			process, err := NewProcessForSockTabEntry(p, types.Process{Protocol: s.protocol})
 			if err != nil {
-				return []types.Process{}, err
+				log.Println(err)
+				continue process
+			}
+			if len(process.DisabledPorts) > 0 && common.IntInListOfInts(process.DisabledPorts, int(process.Port)) == true {
+				log.Printf("Ignoring port '%v' as it's in disabled ports list '%#v' for process '%v'(%v)", process.Port, process.DisabledPorts, process.Name, process.Pid)
+				continue process
+			}
+			if len(process.AllowedPorts) > 0 && common.IntInListOfInts(process.AllowedPorts, int(process.Port)) == false {
+				log.Printf("Ignoring port '%v' as it's not in allowed ports list '%#v' for process '%v'(%v)", process.Port, process.DisabledPorts, process.Name, process.Pid)
+				continue process
 			}
 			processes = append(processes, process)
 		}
