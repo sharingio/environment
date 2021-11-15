@@ -19,7 +19,6 @@ curl -s http://localhost:10093/listening | jq .
 #+end_src
 
 will return contents like this
-#+RESULTS: example request
 #+begin_example
 [
   {
