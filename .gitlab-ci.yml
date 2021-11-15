@@ -41,6 +41,8 @@ variables:
     --platform $PLATFORMS \
     $CI_PROJECT_DIR
 
+# NOTE multi-arch takes too long, something needs to be changed or this will never complete
+# it appears to normally take ~30mins for linux/amd64 alone
 build-environment:
   stage: build
   timeout: 5h
@@ -49,6 +51,7 @@ build-environment:
     entrypoint: [""]
   variables:
     APP: environment
+    PLATFORMS: linux/amd64
   services:
     - docker:dind
   retry: 2
