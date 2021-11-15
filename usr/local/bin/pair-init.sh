@@ -73,7 +73,7 @@ fi
 )
 
 if [ ! -d "/home/ii/.sharing.io" ]; then
-    git clone "https://github.com/${SHARINGIO_PAIR_INSTANCE_SETUP_USER}/.sharing.io" || \
+    git clone "https://github.com/${SHARINGIO_PAIR_USER:-$USER}/.sharing.io" || \
         git clone https://github.com/sharingio/.sharing.io
 fi
 
