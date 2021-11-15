@@ -77,7 +77,7 @@ func main() {
 				l.ServiceName = l.Hostname
 			}
 			listeningNames = append(listeningNames, l.ServiceName)
-			// ofset the number to ensure ports like 80 or 443 aren't overtaken if locally bound
+			// offset the number to ensure ports like 80 or 443 aren't overtaken if locally bound
 			l.ServicePort = l.Port
 			if l.ServicePort < 1000 {
 				l.ServicePort = 10000 + l.Port
@@ -132,15 +132,15 @@ func main() {
 			log.Printf("Failed to prune unused Services in namespace '%v': %v\n", rm.Namespace, err)
 		}
 		if len(deleted) > 0 {
-			log.Printf("Deleted Services %v in namespace '%v'\n", strings.Join(deleted, ", "))
+			log.Printf("Deleted Service(s) %v in namespace '%v'\n", strings.Join(deleted, ", "), rm.Namespace)
 		}
 		if kVersionMajor == 1 && kVersionMinor > 18 {
 			deleted, err = rm.PruneUnusedIngresses(listeningNames)
 			if err != nil {
-				log.Printf("Failed to prune unused Ingresses in namespace '%v': %v\n", rm.Namespace, err)
+				log.Printf("Failed to prune unused Ingress(es) in namespace '%v': %v\n", rm.Namespace, err)
 			}
 			if len(deleted) > 0 {
-				log.Printf("Deleted Ingresses %v\n", strings.Join(deleted, ", "))
+				log.Printf("Deleted Ingress(es) %v in namespace '%v'\n", strings.Join(deleted, ", "), rm.Namespace)
 			}
 		} else if kVersionMajor == 1 && kVersionMinor <= 18 {
 			deleted, err = rm.PruneUnusedIngressesV1beta1(listeningNames)
@@ -148,7 +148,7 @@ func main() {
 				log.Printf("Failed to prune unused Ingresses v1beta1 in namespace: %v\n", rm.Namespace, err)
 			}
 			if len(deleted) > 0 {
-				log.Printf("Deleted Ingresses v1beta1 %v\n", strings.Join(deleted, ", "))
+				log.Printf("Deleted Ingresses v1beta1 %v in namespace '%v'\n", strings.Join(deleted, ", "), rm.Namespace)
 			}
 		}
 	}
