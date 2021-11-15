@@ -1,3 +1,9 @@
+/*
+
+common
+  a set of common functions to use through any target
+
+*/
 package common
 
 import (
@@ -11,7 +17,7 @@ import (
 )
 
 // GetEnvOrDefault ...
-// return env value or default to value
+// returns env value or default to value
 func GetEnvOrDefault(envName string, defaultValue string) (output string) {
 	output = os.Getenv(envName)
 	if output == "" {
@@ -21,32 +27,32 @@ func GetEnvOrDefault(envName string, defaultValue string) (output string) {
 }
 
 // GetAppEnvFile ...
-// location of an env file to load
+// returns the location of an env file to load
 func GetAppEnvFile() (output string) {
 	return GetEnvOrDefault("APP_ENV_FILE", ".env")
 }
 
 // GetAppPort ...
-// the port to bind to
+// returns the port to bind to
 func GetAppPort() (output string) {
 	return GetEnvOrDefault("APP_PORT", "localhost:10093")
 }
 
 // GetPodLabelsFilePath ...
-// the path to a downward API generated file containing the defined Pod labels
+// returns the path to a downward API generated file containing the defined Pod labels
 func GetPodLabelsFilePath() (output string) {
 	return GetEnvOrDefault("APP_POD_LABELS_FILE_PATH", "/etc/podlabels/labels")
 }
 
 // GetAppExternalIP
-// the externalIP for the cluster
+// returns the externalIP for the cluster
 // this is only used in exposer
 func GetAppExternalIP() (output string) {
 	return GetEnvOrDefault("APP_EXTERNAL_IP", GetEnvOrDefault("SHARINGIO_PAIR_LOAD_BALANCER_IP", ""))
 }
 
 // GetAppExporterEndpoint
-// the HTTP URI for the exporter
+// return the HTTP URI for the exporter
 // e.g: http://environment-exporter.default:10093
 // this is only used in exposer
 func GetAppExporterEndpoint() (output string) {
@@ -54,21 +60,21 @@ func GetAppExporterEndpoint() (output string) {
 }
 
 // GetAppEnvironmentNamespace ...
-// the namespace where Environment is deployed
+// returns the namespace where Environment is deployed
 // this is only used in the exposer
 func GetAppEnvironmentNamespace() (output string) {
 	return GetEnvOrDefault("APP_ENVIRONMENT_NAMESPACE", "default")
 }
 
 // GetAppEnvironmentBaseDomain ...
-// the base domain to create ingresses with
+// returns the base domain to create ingresses with
 // this is only used in the exposer
 func GetAppEnvironmentBaseDomain() (output string) {
 	return GetEnvOrDefault("APP_ENVIRONMENT_BASE_DOMAIN", GetEnvOrDefault("SHARINGIO_PAIR_BASE_DNS_NAME", "_.pair.sharing.io"))
 }
 
 // GetAppReconciliationInterval ...
-// the base domain to create ingresses with
+// returns the base domain to create ingresses with
 // this is only used in the exposer
 func GetAppReconciliationInterval() (seconds time.Duration) {
 	defaultSeconds := time.Duration(2 * time.Second)
@@ -86,14 +92,14 @@ func GetAppReconciliationInterval() (seconds time.Duration) {
 }
 
 // GetPodName ...
-// the name of the Pod
+// returns the name of the Pod
 // this is only used in the exporter
 func GetPodName() (output string) {
 	return GetEnvOrDefault("POD_NAME", GetEnvOrDefault("HOSTNAME", ""))
 }
 
 // Logging ...
-// basic request logging middleware
+// is a basic request logging middleware
 func Logging(next http.Handler) http.Handler {
 	// log all requests
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -102,6 +108,7 @@ func Logging(next http.Handler) http.Handler {
 	})
 }
 
+// ReadFile returns a file as a string, given a file path as name
 func ReadFile(name string) (contents string, err error) {
 	content, err := ioutil.ReadFile(name)
 	if err != nil {
@@ -110,6 +117,7 @@ func ReadFile(name string) (contents string, err error) {
 	return string(content), nil
 }
 
+// IntInListOfInts returns a bool with value of if an integer is in a slice of integers
 func IntInListOfInts(list []int, input int) (included bool) {
 	for _, l := range list {
 		if l == input {

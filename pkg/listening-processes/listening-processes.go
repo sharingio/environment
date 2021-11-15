@@ -1,3 +1,10 @@
+/*
+
+listeningprocesses
+  functions used for determine listening processes inside of the Environment
+
+*/
+
 package listeningprocesses
 
 import (
@@ -16,6 +23,7 @@ import (
 
 type sockFn = func(netstat.AcceptFn) ([]netstat.SockTabEntry, error)
 
+// GetPortsListFromString returns an int slice of ports based of a string
 func GetPortsListFromString(portsString string) (ports []int) {
 	portsStrings := strings.Split(portsString, " ")
 	for _, p := range portsStrings {
@@ -28,7 +36,8 @@ func GetPortsListFromString(portsString string) (ports []int) {
 	return ports
 }
 
-func GetProcessFromSockFn(fn sockFn) (processes []netstat.SockTabEntry, err error) {
+// FilterSockFn filters a go-netstat process list
+func FilterSockFn(fn sockFn) (processes []netstat.SockTabEntry, err error) {
 	processes, err = fn(func(s *netstat.SockTabEntry) bool {
 		return s.State == netstat.Listen
 	})
@@ -47,6 +56,7 @@ func GetProcessFromSockFn(fn sockFn) (processes []netstat.SockTabEntry, err erro
 	return processes, nil
 }
 
+// NewProcessForSockTabEntry returns a Process, given a sock
 func NewProcessForSockTabEntry(sock netstat.SockTabEntry, overrides types.Process) (process types.Process, err error) {
 	podName := common.GetPodName()
 	podNamespace := environment.GetNamespace()
@@ -101,11 +111,13 @@ func NewProcessForSockTabEntry(sock netstat.SockTabEntry, overrides types.Proces
 	return process, nil
 }
 
+// netstatSock is a struct to make it easier to interate on finding processes, given the various functions
 type netstatSock struct {
 	fn       func(netstat.AcceptFn) ([]netstat.SockTabEntry, error)
 	protocol types.Protocol
 }
 
+// ListListeningProcesses returns a list of processes that are listening
 func ListListeningProcesses() (processes []types.Process, err error) {
 	// TODO UDP filter for UNCONN as well as LISTEN
 	var processSockList []netstat.SockTabEntry
@@ -128,7 +140,7 @@ func ListListeningProcesses() (processes []types.Process, err error) {
 		},
 	}
 	for _, s := range socks {
-		processSockList, err = GetProcessFromSockFn(s.fn)
+		processSockList, err = FilterSockFn(s.fn)
 		if err != nil {
 			log.Println(err)
 			continue

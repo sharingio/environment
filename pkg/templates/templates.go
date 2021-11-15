@@ -1,3 +1,10 @@
+/*
+
+templates
+  package for parsing and rendering local YAML files
+
+*/
+
 package templates
 
 import (
@@ -16,16 +23,19 @@ import (
 	"github.com/sharingio/environment/pkg/types"
 )
 
+// Template is a struct for storing what's needed for rendering
 type Template struct {
 	process types.Process
 }
 
+// NewTemplate returns a populated Template, given a Process
 func NewTemplate(process types.Process) (template *Template) {
 	return &Template{
 		process: process,
 	}
 }
 
+// RenderYAMLWithProcess parses and evaluates a Go-Template style file, returning a string
 func (t Template) RenderYAMLWithProcess(input string) (output string, err error) {
 	tmpl, err := template.New(fmt.Sprintf("yaml-render-%v", time.Now().Unix())).Parse(input)
 	if err != nil {
@@ -41,6 +51,7 @@ func (t Template) RenderYAMLWithProcess(input string) (output string, err error)
 	return output, nil
 }
 
+// RenderService returns a Service, based on a template in .sharing.io
 func (t Template) RenderService() (service v1.Service, err error) {
 	serviceRawString, err := common.ReadFile(types.DotSharingDotIoExposerTemplatesFolderPath + "/" + string(types.TemplateYamlFileService))
 	if err != nil {
@@ -54,6 +65,7 @@ func (t Template) RenderService() (service v1.Service, err error) {
 	return service, nil
 }
 
+// RenderService returns an Ingress, based on a template in .sharing.io
 func (t Template) RenderIngress() (ingress networkingv1.Ingress, err error) {
 	ingressRawString, err := common.ReadFile(types.DotSharingDotIoExposerTemplatesFolderPath + "/" + string(types.TemplateYamlFileIngress))
 	if err != nil {
@@ -67,6 +79,7 @@ func (t Template) RenderIngress() (ingress networkingv1.Ingress, err error) {
 	return ingress, nil
 }
 
+// RenderService returns an Ingress v1beta1, based on a template in .sharing.io
 func (t Template) RenderIngressv1beta1() (ingress networkingv1beta1.Ingress, err error) {
 	ingressRawString, err := common.ReadFile(types.DotSharingDotIoExposerTemplatesFolderPath + "/" + string(types.TemplateYamlFileIngressV118OrEarlier))
 	if err != nil {

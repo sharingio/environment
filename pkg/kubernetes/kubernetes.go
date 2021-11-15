@@ -1,3 +1,10 @@
+/*
+
+kubernetes
+  functions used for talking to Kubernetes
+
+*/
+
 package kubernetes
 
 import (
@@ -8,8 +15,7 @@ import (
 // user agent for Kubernetes APIServer
 var defaultKubeClientUserAgent = "sharingio/environment/cmd/environment-exposer"
 
-// NewClient ...
-// return a Kubernetes clientset
+// NewClient returns a Kubernetes clientset
 func NewClient() (clientset *kubernetes.Clientset, err error) {
 	config, err := rest.InClusterConfig()
 	if err != nil {

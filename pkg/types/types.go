@@ -1,9 +1,17 @@
+/*
+
+types
+  package for types used through the targets
+
+*/
+
 package types
 
 import (
 	"net"
 )
 
+// Protocol is network protocols
 type Protocol string
 
 const (
@@ -11,8 +19,7 @@ const (
 	ProtocolUDP Protocol = "UDP"
 )
 
-const DotSharingDotIoExposerTemplatesFolderPath string = "/home/ii/.sharing.io/cluster-api/exposer/templates"
-
+// Process is a process that's listening on a port
 type Process struct {
 	Name          string   `json:"name"`
 	Protocol      Protocol `json:"protocol"`
@@ -34,6 +41,7 @@ type Process struct {
 	IngressHost  string            `json:"-"`
 }
 
+// EnvVarName is allowed/disalloed for environment variables
 type EnvVarName string
 
 const (
@@ -48,6 +56,9 @@ const (
 	EnvVarNameSharingioPairIngressReconcilerDisabledPorts EnvVarName = "SHARINGIO_PAIR_INGRESS_RECONCILER_DISABLED_PORTS"
 )
 
+const DotSharingDotIoExposerTemplatesFolderPath string = "/home/ii/.sharing.io/cluster-api/exposer/templates"
+
+// TemplateYamlFile is the name for YAML files that are included
 type TemplateYamlFile string
 
 const (
@@ -56,7 +67,9 @@ const (
 	TemplateYamlFileIngressV118OrEarlier TemplateYamlFile = "ingress-v1.18-or-earlier.yaml"
 )
 
+// allowed listening IP address
 const IPAllInterfaces = "0.0.0.0"
 const IPv6AllInterfaces = "::"
 
+// ResourceLabels is a map for the resource labels to track Kubernetes resources with
 var ResourceLabels = map[string]string{"io.sharing.pair/managed": "true"}
