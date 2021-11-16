@@ -98,6 +98,9 @@ func (t Template) RenderIngressv1beta1() (ingress networkingv1beta1.Ingress, err
 
 // AddCommonLabels adds exposer specific labels
 func (t Template) AddCommonLabels(input map[string]string) map[string]string {
+	if input == nil {
+		input = map[string]string{}
+	}
 	input[string(types.ResourceLabelName)] = fmt.Sprintf("%v", t.process.Name)
 	input[string(types.ResourceLabelPort)] = fmt.Sprintf("%v", t.process.Port)
 	input[string(types.ResourceLabelUid)] = fmt.Sprintf("%v", t.process.Uid)
