@@ -1,3 +1,16 @@
+FROM alpine:3.14 AS extras
+RUN apk add --no-cache tzdata ca-certificates
+RUN adduser -D user
+
+FROM scratch AS base
+WORKDIR /app
+ENV PATH=/app/bin
+COPY --from=extras /etc/passwd /etc/passwd
+COPY --from=extras /etc/group /etc/group
+COPY --from=extras /usr/share/zoneinfo /usr/share/zoneinfo
+COPY --from=extras /etc/ssl /etc/ssl
+USER user
+
 FROM golang:1.17.0-alpine3.14 AS build
 WORKDIR /app
 COPY pkg /app/pkg
@@ -11,18 +24,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH="$GOARCH" go build \
   -o bin/environment-exporter \
   cmd/environment-exporter/main.go
 
-FROM alpine:3.14 AS extras
-RUN apk add --no-cache tzdata ca-certificates
-RUN adduser -D user
-
 FROM scratch AS final
-WORKDIR /app
-ENV PATH=/app
 COPY --from=build /app/bin/environment-exporter /app/bin/environment-exporter
-COPY --from=extras /etc/passwd /etc/passwd
-COPY --from=extras /etc/group /etc/group
-COPY --from=extras /usr/share/zoneinfo /usr/share/zoneinfo
-COPY --from=extras /etc/ssl /etc/ssl
 EXPOSE 10093
-USER user
 ENTRYPOINT ["/app/bin/environment-exporter"]
