@@ -10,7 +10,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -84,12 +83,8 @@ func main() {
 			serviceWithNameAlreadyExists := false
 		existingServiceList:
 			for _, svc := range svcs.Items {
-				found, err := regexp.MatchString(fmt.Sprintf("^%v.*$", l.ServiceName), svc.ObjectMeta.Name)
-				if err != nil {
-					log.Println("Failed to match regexp string: %v\n", err)
-					continue listenList
-				}
-				if !(svc.ObjectMeta.Labels["io.sharing.pair/port"] == fmt.Sprintf("%v", l.Port) && found == true) {
+				if !(svc.ObjectMeta.Labels[string(types.ResourceLabelName)] == fmt.Sprintf("%v", l.Name) &&
+					svc.ObjectMeta.Labels[string(types.ResourceLabelPort)] == fmt.Sprintf("%v", l.Port)) {
 					break existingServiceList
 				}
 				serviceWithNameAlreadyExists = true
