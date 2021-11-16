@@ -24,6 +24,6 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH="$GOARCH" go build \
   -o bin/environment-exposer \
   cmd/environment-exposer/main.go
 
-FROM scratch AS final
+FROM base AS final
 COPY --from=build /app/bin/environment-exposer /app/bin/environment-exposer
 ENTRYPOINT ["/app/bin/environment-exposer"]

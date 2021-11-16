@@ -24,7 +24,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH="$GOARCH" go build \
   -o bin/environment-exporter \
   cmd/environment-exporter/main.go
 
-FROM scratch AS final
+FROM base AS final
 COPY --from=build /app/bin/environment-exporter /app/bin/environment-exporter
 EXPOSE 10093
 ENTRYPOINT ["/app/bin/environment-exporter"]
