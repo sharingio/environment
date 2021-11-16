@@ -46,7 +46,7 @@ func FilterSockFn(fn sockFn) (processes []netstat.SockTabEntry, err error) {
 	}
 	processes = func() (p []netstat.SockTabEntry) {
 		for _, s := range processes {
-			if s.Process.Pid == os.Getpid() {
+			if s.Proccess == nil || s.Process.Pid == os.Getpid() {
 				continue
 			}
 			p = append(p, s)
