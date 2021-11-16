@@ -24,12 +24,12 @@ variables:
 
   export BASE_TAG=$(date --date="${CI_COMMIT_TIMESTAMP//[T+]/ }" '+%Y.%m.%d.%H%M')
   if [[ "$CI_COMMIT_BRANCH" = "$CI_DEFAULT_BRANCH" ]]; then
-    export CONTAINER_EXTRA_DESTINATION="-t $CI_REGISTRY_IMAGE/${APP}:latest$BRANCH_NAME"
+    export CONTAINER_EXTRA_DESTINATION="-t $CI_REGISTRY_IMAGE/${APP}:latest$BRANCH_NAME${EXTRA_TAG_NAME}"
   fi
   if [ -n "$CI_COMMIT_TAG" ]; then
     export BRANCH_NAME=""
     export IMAGE_TAG="$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG/${APP}"
-    export CONTAINER_EXTRA_DESTINATION="-t $CI_REGISTRY_IMAGE/${APP}:$CI_COMMIT_TAG"
+    export CONTAINER_EXTRA_DESTINATION="-t $CI_REGISTRY_IMAGE/${APP}:$CI_COMMIT_TAG${EXTRA_TAG_NAME}"
   fi
 
 .build: &build |
@@ -37,13 +37,13 @@ variables:
     --push \
     -f $CI_PROJECT_DIR/${APP}.Dockerfile \
     $CONTAINER_EXTRA_DESTINATION \
-    -t $CI_REGISTRY_IMAGE/${APP}:$BASE_TAG$BRANCH_NAME \
+    -t $CI_REGISTRY_IMAGE/${APP}:$BASE_TAG$BRANCH_NAME${EXTRA_TAG_NAME} \
     --platform $PLATFORMS \
     $CI_PROJECT_DIR
 
 # NOTE multi-arch takes too long, something needs to be changed or this will never complete
 # it appears to normally take ~30mins for linux/amd64 alone
-build-environment:
+build-environment-amd64:
   stage: build
   timeout: 5h
   image:
@@ -52,6 +52,26 @@ build-environment:
   variables:
     APP: environment
     PLATFORMS: linux/amd64
+    EXTRA_TAG_NAME: -amd64
+  services:
+    - docker:dind
+  retry: 2
+  before_script:
+    - *container-build-pre-script
+    - *declare-extra-destinations
+  script:
+    - *build
+
+build-environment-arm64:
+  stage: build
+  timeout: 5h
+  image:
+    name: docker.io/docker:stable
+    entrypoint: [""]
+  variables:
+    APP: environment
+    PLATFORMS: linux/arm64
+    EXTRA_TAG_NAME: -arm64
   services:
     - docker:dind
   retry: 2
