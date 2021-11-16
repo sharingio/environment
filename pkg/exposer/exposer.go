@@ -30,26 +30,29 @@ var resourceLabelSelector = labels.SelectorFromSet(types.ResourceLabels).String(
 
 // Exposer is a struct for storing fields used in reconciling
 type Exposer struct {
+	Clientset              *kubernetes.Clientset
 	ExporterEndpoint       string
 	IngressBaseDomain      string
 	ReconciliationInterval time.Duration
-	Clientset              *kubernetes.Clientset
+	ResourceNamePrefix     string
 }
 
 // NewExposer returns an Exposer with fields populated from environment variables
 func NewExposer() (exposer *Exposer, err error) {
-	exporterEndpoint := common.GetAppExporterEndpoint()
-	ingressBaseDomain := common.GetAppEnvironmentBaseDomain()
-	reconciliationInterval := common.GetAppReconciliationInterval()
 	clientset, err := k.NewClient()
 	if err != nil {
 		return nil, err
 	}
+	exporterEndpoint := common.GetAppExporterEndpoint()
+	ingressBaseDomain := common.GetAppEnvironmentBaseDomain()
+	reconciliationInterval := common.GetAppReconciliationInterval()
+	resourceNamePrefix := common.GetAppResourceNamePrefix()
 	return &Exposer{
+		Clientset:              clientset,
 		ExporterEndpoint:       exporterEndpoint,
 		IngressBaseDomain:      ingressBaseDomain,
 		ReconciliationInterval: reconciliationInterval,
-		Clientset:              clientset,
+		ResourceNamePrefix:     resourceNamePrefix,
 	}, nil
 }
 

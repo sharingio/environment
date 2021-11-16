@@ -73,6 +73,13 @@ func GetAppEnvironmentBaseDomain() (output string) {
 	return GetEnvOrDefault("APP_ENVIRONMENT_BASE_DOMAIN", GetEnvOrDefault("SHARINGIO_PAIR_BASE_DNS_NAME", "_.pair.sharing.io"))
 }
 
+// GetAppResourceNamePrefix ...
+// returns the string to prefix on Kubernetes resource names
+// this is only used in the exposer
+func GetAppResourceNamePrefix() (output string) {
+	return GetEnvOrDefault("APP_EXPOSER_RESOURCE_NAME_PREFIX", "env")
+}
+
 // GetAppReconciliationInterval ...
 // returns the base domain to create ingresses with
 // this is only used in the exposer

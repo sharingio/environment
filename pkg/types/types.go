@@ -32,6 +32,7 @@ type Process struct {
 	DisabledPorts []int    `json:"disabledPorts"`
 	Disabled      bool     `json:"disabled"`
 
+	ResourceName string            `json:"resourceName"`
 	PodName      string            `json:"podName"`
 	PodNamespace string            `json:"podNamespace"`
 	PodLabels    map[string]string `json:"podLabels"`

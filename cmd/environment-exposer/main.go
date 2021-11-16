@@ -94,7 +94,6 @@ func main() {
 				l.ServiceName = fmt.Sprintf("%v-%v", l.ServiceName, l.Port)
 			}
 
-			listeningNames = append(listeningNames, l.ServiceName)
 			// offset the number to ensure ports like 80 or 443 aren't overtaken if locally bound
 			l.ServicePort = l.Port
 			if l.ServicePort < 1000 {
@@ -102,6 +101,11 @@ func main() {
 			}
 			l.ExternalIP = common.GetAppExternalIP()
 			l.IngressHost = fmt.Sprintf("%v.%v", l.ServiceName, e.IngressBaseDomain)
+			l.ResourceName = l.ServiceName
+			if e.ResourceNamePrefix != "" {
+				l.ResourceName = fmt.Sprintf("%v-%v", e.ResourceNamePrefix, l.ServiceName)
+			}
+			listeningNames = append(listeningNames, l.ResourceName)
 
 			tmpl := templates.NewTemplate(l)
 			svc, err := tmpl.RenderService()
