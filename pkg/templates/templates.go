@@ -62,6 +62,7 @@ func (t Template) RenderService() (service v1.Service, err error) {
 	if err != nil {
 		return v1.Service{}, err
 	}
+	service.ObjectMeta.Labels = t.AddCommonLabels(service.ObjectMeta.Labels)
 	return service, nil
 }
 
@@ -76,6 +77,7 @@ func (t Template) RenderIngress() (ingress networkingv1.Ingress, err error) {
 	if err != nil {
 		return networkingv1.Ingress{}, err
 	}
+	ingress.ObjectMeta.Labels = t.AddCommonLabels(ingress.ObjectMeta.Labels)
 	return ingress, nil
 }
 
@@ -90,5 +92,15 @@ func (t Template) RenderIngressv1beta1() (ingress networkingv1beta1.Ingress, err
 	if err != nil {
 		return networkingv1beta1.Ingress{}, err
 	}
+	ingress.ObjectMeta.Labels = t.AddCommonLabels(ingress.ObjectMeta.Labels)
 	return ingress, nil
+}
+
+// AddCommonLabels adds exposer specific labels
+func (t Template) AddCommonLabels(input map[string]string) map[string]string {
+	input[string(types.ResourceLabelName)] = fmt.Sprintf("%v", t.process.Name)
+	input[string(types.ResourceLabelPort)] = fmt.Sprintf("%v", t.process.Port)
+	input[string(types.ResourceLabelUid)] = fmt.Sprintf("%v", t.process.Uid)
+	input[string(types.ResourceLabelManaged)] = "true"
+	return input
 }
