@@ -71,5 +71,16 @@ const (
 const IPAllInterfaces = "0.0.0.0"
 const IPv6AllInterfaces = "::"
 
+type ResourceLabel string
+
+const resourceLabelRTLD string = "io.sharing.pair"
+
+const (
+	ResourceLabelName    ResourceLabel = ResourceLabel(resourceLabelRTLD + "/" + "name")
+	ResourceLabelPort    ResourceLabel = ResourceLabel(resourceLabelRTLD + "/" + "port")
+	ResourceLabelUid     ResourceLabel = ResourceLabel(resourceLabelRTLD + "/" + "uid")
+	ResourceLabelManaged ResourceLabel = ResourceLabel(resourceLabelRTLD + "/" + "managed")
+)
+
 // ResourceLabels is a map for the resource labels to track Kubernetes resources with
-var ResourceLabels = map[string]string{"io.sharing.pair/managed": "true"}
+var ResourceLabels = map[string]string{string(ResourceLabelManaged): "true"}
