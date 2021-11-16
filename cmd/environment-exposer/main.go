@@ -10,6 +10,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -71,11 +72,33 @@ func main() {
 
 	listenList:
 		for _, l := range listening {
-
-			l.ServiceName = fmt.Sprintf("%v-%v", l.Name, l.Port)
+			l.ServiceName = l.Name
 			if l.Hostname != "" {
 				l.ServiceName = l.Hostname
 			}
+			svcs, err := rm.GetServices()
+			if err != nil {
+				log.Printf("Failed to list Services: %v\n", err)
+				continue listenList
+			}
+			serviceWithNameAlreadyExists := false
+		existingServiceList:
+			for _, svc := range svcs.Items {
+				found, err := regexp.MatchString(fmt.Sprintf("^%v.*$", l.ServiceName), svc.ObjectMeta.Name)
+				if err != nil {
+					log.Println("Failed to match regexp string: %v\n", err)
+					continue listenList
+				}
+				if !(svc.ObjectMeta.Labels["io.sharing.pair/port"] == fmt.Sprintf("%v", l.Port) && found == true) {
+					break existingServiceList
+				}
+				serviceWithNameAlreadyExists = true
+				break existingServiceList
+			}
+			if serviceWithNameAlreadyExists == true {
+				l.ServiceName = fmt.Sprintf("%v-%v", l.ServiceName, l.Port)
+			}
+
 			listeningNames = append(listeningNames, l.ServiceName)
 			// offset the number to ensure ports like 80 or 443 aren't overtaken if locally bound
 			l.ServicePort = l.Port
@@ -89,16 +112,19 @@ func main() {
 			svc, err := tmpl.RenderService()
 			if err != nil {
 				log.Printf("Failed to render Service: %v\n", err)
+				continue listenList
 			}
 
 			ing, err := tmpl.RenderIngress()
 			if err != nil {
 				log.Printf("Failed to render Ingress: %v\n", err)
+				continue listenList
 			}
 
 			ingv1beta1, err := tmpl.RenderIngressv1beta1()
 			if err != nil {
 				log.Printf("Failed to render Ingress: %v\n", err)
+				continue listenList
 			}
 			err = rm.CreateOrUpdateService(&svc)
 			if err != nil && apierrors.IsAlreadyExists(err) == false {
