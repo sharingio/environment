@@ -75,6 +75,8 @@ func main() {
 			if l.Hostname != "" {
 				l.ServiceName = l.Hostname
 			}
+
+			// use {{ ServiceName }}-{{ Port }} as name if there's already a service with the name {{ ServiceName }}
 			svcs, err := rm.GetServices()
 			if err != nil {
 				log.Printf("Failed to list Services: %v\n", err)
@@ -101,6 +103,8 @@ func main() {
 			}
 			l.ExternalIP = common.GetAppExternalIP()
 			l.IngressHost = fmt.Sprintf("%v.%v", l.ServiceName, e.IngressBaseDomain)
+
+			// prefix resource name if provided
 			l.ResourceName = l.ServiceName
 			if e.ResourceNamePrefix != "" {
 				l.ResourceName = fmt.Sprintf("%v-%v", e.ResourceNamePrefix, l.ServiceName)
