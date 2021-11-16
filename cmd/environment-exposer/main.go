@@ -83,11 +83,11 @@ func main() {
 			serviceWithNameAlreadyExists := false
 		existingServiceList:
 			for _, svc := range svcs.Items {
-				if !(svc.ObjectMeta.Labels[string(types.ResourceLabelName)] == fmt.Sprintf("%v", l.Name) &&
-					svc.ObjectMeta.Labels[string(types.ResourceLabelPort)] == fmt.Sprintf("%v", l.Port)) {
+				if svc.ObjectMeta.Labels[string(types.ResourceLabelName)] == fmt.Sprintf("%v", l.Name) &&
+					svc.ObjectMeta.Labels[string(types.ResourceLabelPort)] != fmt.Sprintf("%v", l.Port) {
+					serviceWithNameAlreadyExists = true
 					break existingServiceList
 				}
-				serviceWithNameAlreadyExists = true
 				break existingServiceList
 			}
 			if serviceWithNameAlreadyExists == true {
