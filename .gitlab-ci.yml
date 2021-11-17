@@ -7,6 +7,8 @@ variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
   PLATFORMS: linux/amd64,linux/arm64
+  ARCHES: amd64 arm64
+  REGISTRIES: registry.gitlab.com
 
 .container-build-pre-script: &container-build-pre-script |
   set -x
@@ -114,3 +116,37 @@ build-exposer:
     - *declare-extra-destinations
   script:
     - *build
+
+tag-container-image-environment:
+  stage: post-build
+  image: docker.io/docker:stable
+  variables:
+    APP: environment
+  before_script:
+    - *container-build-pre-script
+    - *declare-extra-destinations
+  script:
+    - |
+      set -x
+      cp -rf /kaniko/.docker $HOME/.docker
+      if [[ -z "$CI_COMMIT_TAG" ]]; then
+      fi
+      for tag in $BASE_TAG$BRANCH_NAME${EXTRA_TAG_NAME} latest$BRANCH_NAME${EXTRA_TAG_NAME}; do
+        for reg in $REGISTRIES; do
+          export IMAGE_TAG_WITH_ARCH=""
+          for arch in $ARCHES; do
+            IMAGE="$reg/$CI_PROJECT_PATH:$tag-$arch"
+            export IMAGE_TAG_WITH_ARCH="$IMAGE_TAG_WITH_ARCH $IMAGE"
+          done
+          docker manifest create $reg/$CI_PROJECT_PATH/${APP}:$tag $IMAGE_TAG_WITH_ARCH
+          for arch in $ARCHES; do
+            # TODO tidy up
+            EXTRA_ARGS=""
+            if [ "$arch" = "arm64" ]; then
+              EXTRA_ARGS="--variant v8"
+            fi
+            docker manifest annotate $reg/$CI_PROJECT_PATH/${APP}:$tag $reg/$CI_PROJECT_PATH/${APP}:$tag-$arch --os linux --arch $arch $EXTRA_ARGS
+          done
+          docker manifest push $reg/$CI_PROJECT_PATH/${APP}:$tag
+        done
+      done
