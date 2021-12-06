@@ -26,7 +26,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
   && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
   && apt-key fingerprint 0EBFCD88 \
   && add-apt-repository "deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
-  && curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -x - \
+  && curl -fsSL https://deb.nodesource.com/setup_16.x | bash -x - \
   && apt update \
   && DEBIAN_FRONTEND=noninteractive apt install --no-install-recommends -y \
     emacs-nox \
