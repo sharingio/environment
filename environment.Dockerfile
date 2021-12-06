@@ -75,7 +75,6 @@ RUN DEBIAN_FRONTEND=noninteractive \
     fonts-powerline \
     dnsutils \
     python3-pip \
-    npm \
     ripgrep \
     python-is-python3 \
     shellcheck \
