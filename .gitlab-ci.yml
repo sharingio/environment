@@ -136,8 +136,6 @@ tag-container-image-environment:
   script:
     - |
       set -x
-      if [[ -z "$CI_COMMIT_TAG" ]]; then
-      fi
       for tag in $BASE_TAG$BRANCH_NAME${EXTRA_TAG_NAME} latest$BRANCH_NAME${EXTRA_TAG_NAME}; do
         for reg in $REGISTRIES; do
           export IMAGE_TAG_WITH_ARCH=""
