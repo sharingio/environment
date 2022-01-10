@@ -123,6 +123,7 @@ tag-container-image-environment:
   image: docker.io/docker:stable
   variables:
     APP: environment
+    DOCKER_HOST: ""
   before_script:
     - *container-build-pre-script
     - *declare-extra-destinations
