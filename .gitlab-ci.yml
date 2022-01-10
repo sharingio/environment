@@ -7,8 +7,8 @@ variables:
   DOCKER_HOST: tcp://docker:2375/
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
-  PLATFORMS: linux/amd64,linux/arm64
-  ARCHES: amd64 arm64
+  PLATFORMS: linux/amd64
+  ARCHES: amd64
   REGISTRIES: registry.gitlab.com
 
 .container-build-pre-script: &container-build-pre-script |
@@ -65,24 +65,24 @@ build-environment-amd64:
   script:
     - *build
 
-build-environment-arm64:
-  stage: build
-  timeout: 5h
-  image:
-    name: docker.io/docker:stable
-    entrypoint: [""]
-  variables:
-    APP: environment
-    PLATFORMS: linux/arm64
-    EXTRA_TAG_NAME: -arm64
-  services:
-    - docker:dind
-  retry: 2
-  before_script:
-    - *container-build-pre-script
-    - *declare-extra-destinations
-  script:
-    - *build
+# build-environment-arm64:
+#   stage: build
+#   timeout: 5h
+#   image:
+#     name: docker.io/docker:stable
+#     entrypoint: [""]
+#   variables:
+#     APP: environment
+#     PLATFORMS: linux/arm64
+#     EXTRA_TAG_NAME: -arm64
+#   services:
+#     - docker:dind
+#   retry: 2
+#   before_script:
+#     - *container-build-pre-script
+#     - *declare-extra-destinations
+#   script:
+#     - *build
 
 build-exporter:
   stage: build
