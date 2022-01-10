@@ -11,13 +11,16 @@ variables:
   ARCHES: amd64
   REGISTRIES: registry.gitlab.com
 
-.container-build-pre-script: &container-build-pre-script |
+.container-build-init-buildx: &container-build-init-buildx |
   set -x
   mkdir -p $HOME/.docker/cli-plugins
   wget -O $HOME/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.5.1/buildx-v0.5.1.linux-amd64
   chmod +x $HOME/.docker/cli-plugins/docker-buildx
   docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
   docker buildx create --use --name builder
+
+.container-build-pre-script: &container-build-pre-script |
+  set -x
   docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
 .declare-extra-destinations-img: &declare-extra-destinations |
@@ -60,6 +63,7 @@ build-environment-amd64:
     - docker:dind
   retry: 2
   before_script:
+    - *container-build-init-buildx
     - *container-build-pre-script
     - *declare-extra-destinations
   script:
@@ -96,6 +100,7 @@ build-exporter:
     - docker:dind
   retry: 2
   before_script:
+    - *container-build-init-buildx
     - *container-build-pre-script
     - *declare-extra-destinations
   script:
@@ -113,6 +118,7 @@ build-exposer:
     - docker:dind
   retry: 2
   before_script:
+    - *container-build-init-buildx
     - *container-build-pre-script
     - *declare-extra-destinations
   script:
