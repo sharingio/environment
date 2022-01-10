@@ -6,7 +6,7 @@ FROM $BASE_IMAGE
 
 ARG ENV_DOOM_REPO=https://github.com/hlissner/doom-emacs
 ARG ENV_DOOM_CONFIG_REPO=https://github.com/humacs/.doom.d
-ARG ENV_DOOM_REF=0adaf03088ee7f39b3b2bca76e24fb1828721722
+ARG ENV_DOOM_REF=af7c1d79bd63d78410aafc410d52ee5c1109ec26
 ARG ENV_DOOM_CONFIG_REF=13d47156d1eeda72fff473dacbef3cfd499bae3c
 ENV TERM=screen-256color \
   DOOMDIR=/home/ii/.doom.d \
