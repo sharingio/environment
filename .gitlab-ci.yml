@@ -10,6 +10,7 @@ variables:
   PLATFORMS: linux/amd64
   ARCHES: amd64
   REGISTRIES: registry.gitlab.com
+  IMAGE_DOCKER: docker.io/docker:20.10.6
 
 .container-build-init-buildx: &container-build-init-buildx |
   set -x
@@ -53,7 +54,7 @@ build-environment-amd64:
   stage: build
   timeout: 5h
   image:
-    name: docker.io/docker:stable
+    name: $IMAGE_DOCKER
     entrypoint: [""]
   variables:
     APP: environment
@@ -92,7 +93,7 @@ build-exporter:
   stage: build
   timeout: 5h
   image:
-    name: docker.io/docker:stable
+    name: $IMAGE_DOCKER
     entrypoint: [""]
   variables:
     APP: exporter
@@ -110,7 +111,7 @@ build-exposer:
   stage: build
   timeout: 5h
   image:
-    name: docker.io/docker:stable
+    name: $IMAGE_DOCKER
     entrypoint: [""]
   variables:
     APP: exposer
@@ -126,7 +127,7 @@ build-exposer:
 
 tag-container-image-environment:
   stage: post-build
-  image: docker.io/docker:stable
+  image: $IMAGE_DOCKER
   variables:
     APP: environment
     DOCKER_HOST: ""
