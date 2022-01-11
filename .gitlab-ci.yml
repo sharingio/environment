@@ -141,7 +141,7 @@ tag-container-image-environment:
         for reg in $REGISTRIES; do
           export IMAGE_TAG_WITH_ARCH=""
           for arch in $ARCHES; do
-            IMAGE="$reg/$CI_PROJECT_PATH:$tag-$arch"
+            IMAGE="$reg/$CI_PROJECT_PATH/${APP}:$tag-$arch"
             export IMAGE_TAG_WITH_ARCH="$IMAGE_TAG_WITH_ARCH $IMAGE"
           done
           docker manifest create $reg/$CI_PROJECT_PATH/${APP}:$tag $IMAGE_TAG_WITH_ARCH
