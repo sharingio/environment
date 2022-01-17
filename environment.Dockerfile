@@ -215,7 +215,7 @@ RUN set -x \
 RUN git clone https://github.com/kubernetes-sigs/cluster-api /tmp/cluster-api && \
   cd /tmp/cluster-api && \
   git checkout v${CLUSTERCTL_VERSION} && \
-  go build -a -trimpath -ldflags "$(bash ./hack/version.sh) -extldflags '-static'" -o /usr/local/bin/clusterctl ./cmd/clusterctl && \
+  /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go build -a -trimpath -ldflags "$(bash ./hack/version.sh) -extldflags '-static'" -o /usr/local/bin/clusterctl ./cmd/clusterctl && \
   rm -rf /tmp/cluster-api
 
 # Install Clojure
