@@ -212,7 +212,12 @@ RUN set -x \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/google/go-containerregistry/cmd/gcrane \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/wagoodman/dive@v${DIVE_VERSION} \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/equinix/metal-cli/cmd/metal@v$METALCLI_VERSION \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install sigs.k8s.io/cluster-api/cmd/clusterctl@v${CLUSTERCTL_VERSION}
+RUN git clone https://github.com/kubernetes-sigs/cluster-api /tmp/cluster-api && \
+  cd /tmp/cluster-api && \
+  git checkout v${CLUSTERCTL_VERSION} && \
+  go build -a -trimpath -ldflags "$(bash ./hack/version.sh) -extldflags '-static'" -o /usr/local/bin/clusterctl ./cmd/clusterctl && \
+  rm -rf /tmp/cluster-api
+
 # Install Clojure
 RUN curl -OL https://download.clojure.org/install/linux-install-${CLOJURE_VERSION}.sh \
     && bash linux-install-${CLOJURE_VERSION}.sh \
