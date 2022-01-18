@@ -195,22 +195,21 @@ RUN curl -fsSL https://raw.githubusercontent.com/technomancy/leiningen/${LEIN_VE
     && chmod +x /usr/local/bin/lein \
     && lein version
 RUN set -x \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/gopls@latest \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/owenthereal/upterm \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/mikefarah/yq/v4 \
-# gocode binary
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/stamblerre/gocode \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/go-delve/delve/cmd/dlv \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/fatih/gomodifytags \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/cweill/gotests/... \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/motemen/gore/cmd/gore@v0.5.2 \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/cmd/guru \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/minio/mc \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/jessfraz/dockfmt \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get gitlab.com/safesurfer/go-http-server \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/google/go-containerregistry/cmd/crane \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/google/go-containerregistry/cmd/gcrane \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/wagoodman/dive@v${DIVE_VERSION} \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install golang.org/x/tools/gopls@latest \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/mikefarah/yq/v4@latest \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/stamblerre/gocode@latest \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/go-delve/delve/cmd/dlv@latest \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/fatih/gomodifytags@latest \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/cweill/gotests/...@latest \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/motemen/gore/cmd/gore@v0.5.2 \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install golang.org/x/tools/cmd/guru@latest \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/minio/mc@latest \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/jessfraz/dockfmt@latest \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install gitlab.com/safesurfer/go-http-server@latest \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/google/go-containerregistry/cmd/crane@latest \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/google/go-containerregistry/cmd/gcrane@latest \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/equinix/metal-cli/cmd/metal@v$METALCLI_VERSION
 
 RUN git clone https://github.com/kubernetes-sigs/cluster-api /tmp/cluster-api && \
@@ -250,8 +249,9 @@ RUN set -x && \
   dockfmt version && \
   crane version && \
   gcrane version && \
-  nerdctl version | grep Version && \
-  metal --version
+  nerdctl version 2> /dev/null | grep Version && \
+  metal --version && \
+  docker version -f '{{ . }}'
 
 RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
   && touch /etc/localtime
