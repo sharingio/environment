@@ -75,6 +75,13 @@ fi
 if [ ! -d "/home/ii/.sharing.io" ]; then
     git clone "https://github.com/${SHARINGIO_PAIR_USER:-$USER}/.sharing.io" || \
         git clone https://github.com/sharingio/.sharing.io
+
+    if [ -z "${SHARINGIO_REPO_BRANCH}" ]; then
+        (
+            cd ~/.sharing.io
+            git switch "${SHARINGIO_REPO_BRANCH}" || true
+        )
+    fi
 fi
 
 . /home/ii/.sharing.io/sharingio-pair-preinit-script.sh
