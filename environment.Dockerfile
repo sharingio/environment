@@ -251,7 +251,7 @@ RUN set -x && \
   gcrane version && \
   nerdctl version 2> /dev/null | grep Version && \
   metal --version && \
-  docker version -f '{{ . }}'
+  docker version -f '{{ . }}' 2> /dev/null | grep 'Docker Engine - Community'
 
 RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
   && touch /etc/localtime
