@@ -72,10 +72,8 @@ fi
     eval "$INIT_PREFINISH_BLOCK"
 )
 
-if [ ! -d "/home/ii/.sharing.io" ]; then
-    git clone "https://github.com/${SHARINGIO_PAIR_USER:-$USER}/.sharing.io" || \
-        git clone https://github.com/sharingio/.sharing.io
-fi
+sudo cp -R /var/run/host/root/.sharing.io "${HOME}/.sharing.io"
+sudo chown -R ii:ii "${HOME}/.sharing.io"
 
 . /home/ii/.sharing.io/sharingio-pair-preinit-script.sh
 
