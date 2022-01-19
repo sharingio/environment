@@ -133,28 +133,28 @@ tag-container-image-environment:
   variables:
     APP: environment
     DOCKER_HOST: ""
-    before_script:
-      - *container-build-pre-script
-      - *declare-extra-destinations
-      script:
-        - |
-          set -x
-          for tag in $BASE_TAG$BRANCH_NAME latest$BRANCH_NAME; do
-            for reg in $REGISTRIES; do
-              export" IMAGE_TAG_WITH_ARCH="
-              for arch in $ARCHES; do
-                IMAGE="$reg/$CI_PROJECT_PATH/${APP}:$tag-$arch"
-                export IMAGE_TAG_WITH_ARCH="$IMAGE_TAG_WITH_ARCH $IMAGE"
-              done
-              docker manifest create $reg/$CI_PROJECT_PATH/${APP}:$tag $IMAGE_TAG_WITH_ARCH
-              for arch in $ARCHES; do
-                # TODO tidy up
-                EXTRA_ARGS=""
-                if [ "$arch" = "arm64" ]; then
-                  EXTRA_ARGS="--variant v8"
-                fi
-                docker manifest annotate $reg/$CI_PROJECT_PATH/${APP}:$tag $reg/$CI_PROJECT_PATH/${APP}:$tag-$arch --os linux --arch $arch $EXTRA_ARGS
-              done
-              docker manifest push $reg/$CI_PROJECT_PATH/${APP}:$tag
-            done
+  before_script:
+    - *container-build-pre-script
+    - *declare-extra-destinations
+  script:
+    - |
+      set -x
+      for tag in $BASE_TAG$BRANCH_NAME latest$BRANCH_NAME; do
+        for reg in $REGISTRIES; do
+          export" IMAGE_TAG_WITH_ARCH="
+          for arch in $ARCHES; do
+            IMAGE="$reg/$CI_PROJECT_PATH/${APP}:$tag-$arch"
+            export IMAGE_TAG_WITH_ARCH="$IMAGE_TAG_WITH_ARCH $IMAGE"
           done
+          docker manifest create $reg/$CI_PROJECT_PATH/${APP}:$tag $IMAGE_TAG_WITH_ARCH
+          for arch in $ARCHES; do
+            # TODO tidy up
+            EXTRA_ARGS=""
+            if [ "$arch" = "arm64" ]; then
+              EXTRA_ARGS="--variant v8"
+            fi
+            docker manifest annotate $reg/$CI_PROJECT_PATH/${APP}:$tag $reg/$CI_PROJECT_PATH/${APP}:$tag-$arch --os linux --arch $arch $EXTRA_ARGS
+          done
+          docker manifest push $reg/$CI_PROJECT_PATH/${APP}:$tag
+        done
+      done
