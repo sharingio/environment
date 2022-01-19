@@ -141,7 +141,7 @@ tag-container-image-environment:
       set -x
       for tag in $BASE_TAG$BRANCH_NAME latest$BRANCH_NAME; do
         for reg in $REGISTRIES; do
-          export" IMAGE_TAG_WITH_ARCH="
+          export IMAGE_TAG_WITH_ARCH=""
           for arch in $ARCHES; do
             IMAGE="$reg/$CI_PROJECT_PATH/${APP}:$tag-$arch"
             export IMAGE_TAG_WITH_ARCH="$IMAGE_TAG_WITH_ARCH $IMAGE"
