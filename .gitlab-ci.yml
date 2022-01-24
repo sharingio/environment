@@ -71,6 +71,11 @@ build-environment-amd64:
     - *declare-extra-destinations
   script:
     - *build
+  only:
+    changes:
+      - etc/
+      - usr/
+      - environment.Dockerfile
 
 # build-environment-arm64:
 #   stage: build
@@ -108,6 +113,13 @@ build-exporter:
     - *declare-extra-destinations
   script:
     - *build
+  only:
+    changes:
+      - cmd/
+      - pkg/
+      - go.mod
+      - go.sum
+      - exporter.Dockerfile
 
 build-exposer:
   stage: build
@@ -126,6 +138,13 @@ build-exposer:
     - *declare-extra-destinations
   script:
     - *build
+  only:
+    changes:
+      - cmd/
+      - pkg/
+      - go.mod
+      - go.sum
+      - exporter.Dockerfile
 
 tag-container-image-environment:
   stage: post-build
@@ -158,3 +177,8 @@ tag-container-image-environment:
           docker manifest push $reg/$CI_PROJECT_PATH/${APP}:$tag
         done
       done
+  only:
+    changes:
+      - etc/
+      - usr/
+      - environment.Dockerfile
