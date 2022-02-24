@@ -136,7 +136,6 @@ ENV DOCKER_VERSION=20.10.10 \
   FZF_VERSION=0.26.0 \
   NERDCTL_VERSION=0.13.0 \
   METALCLI_VERSION=0.6.0 \
-  KO_VERSION=0.10.0 \
 # GOLANG, path vars
   GOROOT=/usr/local/go \
   PATH="$PATH:/usr/local/go/bin:/usr/libexec/flatpak-xdg-utils:/home/ii/go/bin" \
@@ -211,8 +210,7 @@ RUN set -x \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install gitlab.com/safesurfer/go-http-server@latest \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/google/go-containerregistry/cmd/crane@latest \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/google/go-containerregistry/cmd/gcrane@latest \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/equinix/metal-cli/cmd/metal@v$METALCLI_VERSION \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/google/ko@v$KO_VERSION
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/equinix/metal-cli/cmd/metal@v$METALCLI_VERSION
 
 RUN git clone https://github.com/kubernetes-sigs/cluster-api /tmp/cluster-api && \
   cd /tmp/cluster-api && \
@@ -253,8 +251,7 @@ RUN set -x && \
   gcrane version && \
   nerdctl version 2> /dev/null | grep Version && \
   metal --version && \
-  docker version -f '{{ . }}' 2> /dev/null | grep 'Docker Engine - Community' && \
-  ko version | grep "${KO_VERSION}"
+  docker version -f '{{ . }}' 2> /dev/null | grep 'Docker Engine - Community'
 
 RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
   && touch /etc/localtime
