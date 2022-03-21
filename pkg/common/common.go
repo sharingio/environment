@@ -80,6 +80,12 @@ func GetAppResourceNamePrefix() (output string) {
 	return GetEnvOrDefault("APP_EXPOSER_RESOURCE_NAME_PREFIX", "env")
 }
 
+// GetAppIngressClassName
+// returns the ingressclass name to use for ingress resources
+func GetAppIngressClassName() (output string) {
+	return GetEnvOrDefault("APP_INGRESS_CLASS_NAME", "nginx")
+}
+
 // GetAppReconciliationInterval ...
 // returns the base domain to create ingresses with
 // this is only used in the exposer

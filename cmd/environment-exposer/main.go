@@ -102,6 +102,7 @@ func main() {
 				l.ServicePort = 10000 + l.Port
 			}
 			l.ExternalIP = common.GetAppExternalIP()
+			l.IngressClassName = common.GetAppIngressClassName()
 			l.IngressHost = fmt.Sprintf("%v.%v", l.ServiceName, e.IngressBaseDomain)
 
 			// prefix resource name if provided
