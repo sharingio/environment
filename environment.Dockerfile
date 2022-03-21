@@ -91,6 +91,8 @@ RUN DEBIAN_FRONTEND=noninteractive \
     ssh-import-id \
     bsdmainutils \
     netcat \
+    man-db \
+  && unminimize \
   && ln -s /usr/bin/fdfind /usr/local/bin/fd \
   && rm -rf /var/lib/apt/lists/*
 
