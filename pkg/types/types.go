@@ -32,14 +32,15 @@ type Process struct {
 	DisabledPorts []int    `json:"disabledPorts"`
 	Disabled      bool     `json:"disabled"`
 
-	ResourceName string            `json:"resourceName"`
-	PodName      string            `json:"podName"`
-	PodNamespace string            `json:"podNamespace"`
-	PodLabels    map[string]string `json:"podLabels"`
-	ServiceName  string            `json:"-"`
-	ServicePort  uint16            `json:"-"`
-	ExternalIP   string            `json:"-"`
-	IngressHost  string            `json:"-"`
+	ResourceName     string            `json:"resourceName"`
+	PodName          string            `json:"podName"`
+	PodNamespace     string            `json:"podNamespace"`
+	PodLabels        map[string]string `json:"podLabels"`
+	ServiceName      string            `json:"-"`
+	ServicePort      uint16            `json:"-"`
+	ExternalIP       string            `json:"-"`
+	IngressHost      string            `json:"-"`
+	IngressClassName string            `json:"-"`
 }
 
 // EnvVarName is allowed/disalloed for environment variables

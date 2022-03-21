@@ -9,6 +9,7 @@ A controller for mananging Kubernetes Service and Ingress resources based on the
 | ~APP_EXTERNAL_IP~             | =""=                                        | The IP which the Pair instance is accessible from                                       |
 | ~APP_ENVIRONMENT_NAMESPACE~   | =default=                                   | The namespace where Environment is deployed                                             |
 | ~APP_ENVIRONMENT_BASE_DOMAIN~ | =_.pair.sharing.io=                         | The DNS base domain assigned to the Pair instance (e.g: mycoolinstance.pair.sharing.io) |
+| ~APP_INGRESS_CLASS_NAME~      | =nginx=                                     | The Ingress class to use for exposing                                                   |
 
 * Deployment example
 #+begin_src yaml :tange ../../environment-exposer-example.yaml
