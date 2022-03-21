@@ -137,6 +137,7 @@ ENV DOCKER_VERSION=20.10.10 \
   NERDCTL_VERSION=0.13.0 \
   METALCLI_VERSION=0.6.0 \
   KO_VERSION=0.10.0 \
+  KN_VERSION=1.3.1 \
 # GOLANG, path vars
   GOROOT=/usr/local/go \
   PATH="$PATH:/usr/local/go/bin:/usr/libexec/flatpak-xdg-utils:/home/ii/go/bin" \
@@ -195,6 +196,9 @@ RUN curl -fsSL https://raw.githubusercontent.com/technomancy/leiningen/${LEIN_VE
     -o /usr/local/bin/lein \
     && chmod +x /usr/local/bin/lein \
     && lein version
+RUN . /usr/lib/sharingio/environment/helper.sh \
+  && curl -L https://github.com/knative/client/releases/download/knative-v${KN_VERSION}/kn-linux-${ARCH_TYPE_2} -o /usr/local/bin/kn \
+  && chmod +x /usr/local/bin/kn
 RUN set -x \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/owenthereal/upterm \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/wagoodman/dive@v${DIVE_VERSION} \
