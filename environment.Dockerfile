@@ -10,7 +10,30 @@ ARG ENV_DOOM_REF=af7c1d79bd63d78410aafc410d52ee5c1109ec26
 ARG ENV_DOOM_CONFIG_REF=13d47156d1eeda72fff473dacbef3cfd499bae3c
 ENV TERM=screen-256color \
   DOOMDIR=/home/ii/.doom.d \
-  PATH=$PATH:/var/local/doom-emacs/bin
+  PATH=$PATH:/var/local/doom-emacs/bin \
+  DOCKER_VERSION=20.10.10 \
+  KIND_VERSION=0.11.1 \
+  KUBECTL_VERSION=1.22.1 \
+  GO_VERSION=1.17.3 \
+  TILT_VERSION=0.22.15 \
+  TMATE_VERSION=2.4.0 \
+  HELM_VERSION=3.7.1 \
+  GH_VERSION=2.2.0 \
+  LEIN_VERSION=stable \
+  CLOJURE_VERSION=1.10.1.697 \
+  CLUSTERCTL_VERSION=0.3.22 \
+  TALOSCTL_VERSION=0.13.2 \
+  TERRAFORM_VERSION=1.0.0 \
+  DIVE_VERSION=0.10.0 \
+  CRICTL_VERSION=1.22.0 \
+  KUBECTX_VERSION=0.9.4 \
+  FZF_VERSION=0.26.0 \
+  NERDCTL_VERSION=0.13.0 \
+  METALCLI_VERSION=0.6.0 \
+  KO_VERSION=0.10.0 \
+  KN_VERSION=1.3.1 \
+  GCLOUD_VERSION=372.0.0-0 \
+  AWSCLI_VERSION=1.19.1-1
 
 RUN DEBIAN_FRONTEND=noninteractive \
   apt update \
@@ -84,8 +107,8 @@ RUN DEBIAN_FRONTEND=noninteractive \
     libcap2-bin \
     locate \
     flatpak-xdg-utils \
-    google-cloud-sdk \
-    awscli \
+    google-cloud-sdk=$GCLOUD_VERSION \
+    awscli=$AWSCLI_VERSION \
     expect \
     graphviz \
     ssh-import-id \
@@ -117,29 +140,8 @@ RUN /var/local/doom-emacs/bin/org-tangle .doom.d/ii.org \
 
 USER root
 COPY ./usr/lib /usr/lib
-ENV DOCKER_VERSION=20.10.10 \
-  KIND_VERSION=0.11.1 \
-  KUBECTL_VERSION=1.22.1 \
-  GO_VERSION=1.17.3 \
-  TILT_VERSION=0.22.15 \
-  TMATE_VERSION=2.4.0 \
-  HELM_VERSION=3.7.1 \
-  GH_VERSION=2.2.0 \
-  LEIN_VERSION=stable \
-  CLOJURE_VERSION=1.10.1.697 \
-  CLUSTERCTL_VERSION=0.3.22 \
-  TALOSCTL_VERSION=0.13.2 \
-  TERRAFORM_VERSION=1.0.0 \
-  DIVE_VERSION=0.10.0 \
-  CRICTL_VERSION=1.22.0 \
-  KUBECTX_VERSION=0.9.4 \
-  FZF_VERSION=0.26.0 \
-  NERDCTL_VERSION=0.13.0 \
-  METALCLI_VERSION=0.6.0 \
-  KO_VERSION=0.10.0 \
-  KN_VERSION=1.3.1 \
 # GOLANG, path vars
-  GOROOT=/usr/local/go \
+ENV GOROOT=/usr/local/go \
   PATH="$PATH:/usr/local/go/bin:/usr/libexec/flatpak-xdg-utils:/home/ii/go/bin" \
   CONTAINERD_NAMESPACE=k8s.io
 RUN . /usr/lib/sharingio/environment/helper.sh \
