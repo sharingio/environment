@@ -138,6 +138,8 @@ ENV DOCKER_VERSION=20.10.10 \
   METALCLI_VERSION=0.6.0 \
   KO_VERSION=0.10.0 \
   KN_VERSION=1.3.1 \
+  UPTERM_VERSION=0.7.6 \
+  GOPLS_VERSION=0.8.1 \
 # GOLANG, path vars
   GOROOT=/usr/local/go \
   PATH="$PATH:/usr/local/go/bin:/usr/libexec/flatpak-xdg-utils:/home/ii/go/bin" \
@@ -199,10 +201,12 @@ RUN curl -fsSL https://raw.githubusercontent.com/technomancy/leiningen/${LEIN_VE
 RUN . /usr/lib/sharingio/environment/helper.sh \
   && curl -L https://github.com/knative/client/releases/download/knative-v${KN_VERSION}/kn-linux-${ARCH_TYPE_2} -o /usr/local/bin/kn \
   && chmod +x /usr/local/bin/kn
+RUN . /usr/lib/sharingio/environment/helper.sh \
+  && curl -L https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}/dive_${DIVE_VERSION}_linux_${ARCH_TYPE_2}.tar.gz | tar --directory /usr/local/bin --extract --ungzip dive
+RUN . /usr/lib/sharingio/environment/helper.sh \
+  && curl -L https://github.com/owenthereal/upterm/releases/download/v${UPTERM_VERSION}/upterm_linux_${ARCH_TYPE_2}.tar.gz | tar --directory /usr/local/bin --extract --ungzip upterm
 RUN set -x \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/owenthereal/upterm \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/wagoodman/dive@v${DIVE_VERSION} \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install golang.org/x/tools/gopls@latest \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install golang.org/x/tools/gopls@v$GOPLS_VERSION \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/mikefarah/yq/v4@latest \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/stamblerre/gocode@latest \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/go-delve/delve/cmd/dlv@latest \
