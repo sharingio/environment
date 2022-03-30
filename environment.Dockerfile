@@ -120,7 +120,7 @@ COPY ./usr/lib /usr/lib
 ENV DOCKER_VERSION=20.10.10 \
   KIND_VERSION=0.11.1 \
   KUBECTL_VERSION=1.22.1 \
-  GO_VERSION=1.17.3 \
+  GO_VERSION=1.18 \
   TILT_VERSION=0.22.15 \
   TMATE_VERSION=2.4.0 \
   HELM_VERSION=3.7.1 \
@@ -136,8 +136,10 @@ ENV DOCKER_VERSION=20.10.10 \
   FZF_VERSION=0.26.0 \
   NERDCTL_VERSION=0.13.0 \
   METALCLI_VERSION=0.6.0 \
-  KO_VERSION=0.10.0 \
+  KO_VERSION=0.11.2 \
   KN_VERSION=1.3.1 \
+  UPTERM_VERSION=0.7.6 \
+  GOPLS_VERSION=0.8.1 \
 # GOLANG, path vars
   GOROOT=/usr/local/go \
   PATH="$PATH:/usr/local/go/bin:/usr/libexec/flatpak-xdg-utils:/home/ii/go/bin" \
@@ -199,10 +201,12 @@ RUN curl -fsSL https://raw.githubusercontent.com/technomancy/leiningen/${LEIN_VE
 RUN . /usr/lib/sharingio/environment/helper.sh \
   && curl -L https://github.com/knative/client/releases/download/knative-v${KN_VERSION}/kn-linux-${ARCH_TYPE_2} -o /usr/local/bin/kn \
   && chmod +x /usr/local/bin/kn
+RUN . /usr/lib/sharingio/environment/helper.sh \
+  && curl -L https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}/dive_${DIVE_VERSION}_linux_${ARCH_TYPE_2}.tar.gz | tar --directory /usr/local/bin --extract --ungzip dive
+RUN . /usr/lib/sharingio/environment/helper.sh \
+  && curl -L https://github.com/owenthereal/upterm/releases/download/v${UPTERM_VERSION}/upterm_linux_${ARCH_TYPE_2}.tar.gz | tar --directory /usr/local/bin --extract --ungzip upterm
 RUN set -x \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/owenthereal/upterm \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/wagoodman/dive@v${DIVE_VERSION} \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install golang.org/x/tools/gopls@latest \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install golang.org/x/tools/gopls@v$GOPLS_VERSION \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/mikefarah/yq/v4@latest \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/stamblerre/gocode@latest \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/go-delve/delve/cmd/dlv@latest \
