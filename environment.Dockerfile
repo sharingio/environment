@@ -70,7 +70,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     iftop \
     tmux \
     language-pack-en \
-    openjdk-18-jdk \
+    openjdk-17-jdk \
     rlwrap \
     fonts-powerline \
     dnsutils \
