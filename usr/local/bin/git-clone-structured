@@ -45,7 +45,6 @@ for repo in ${REPOS[*]}; do
         DEST="${DEST}/${hostname}"
     fi
     DEST="${DEST}/${org}/${reponame}"
-    mkdir -p "$DEST"
     git clone -v --recursive "$repo" "$DEST"
     code=$?
     if [ "$protocol" = "git" ] && [ ! $code -eq 0 ] && [ ! -d "$DEST" ] && [ -n "${SHARINGIO_PAIR_NAME}" ]; then
