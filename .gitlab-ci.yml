@@ -72,6 +72,8 @@ build-environment-amd64:
   script:
     - *build
   only:
+    refs:
+      - tags
     changes:
       - etc/
       - usr/
@@ -114,6 +116,8 @@ build-exporter:
   script:
     - *build
   only:
+    refs:
+      - tags
     changes:
       - cmd/
       - pkg/
@@ -139,6 +143,8 @@ build-exposer:
   script:
     - *build
   only:
+    refs:
+      - tags
     changes:
       - cmd/
       - pkg/
@@ -178,6 +184,8 @@ tag-container-image-environment:
         done
       done
   only:
+    refs:
+      - tags
     changes:
       - etc/
       - usr/
