@@ -91,6 +91,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     ssh-import-id \
     bsdmainutils \
     netcat \
+    asciinema \
   && ln -s /usr/bin/fdfind /usr/local/bin/fd \
   && rm -rf /var/lib/apt/lists/*
 
@@ -137,7 +138,7 @@ ENV DOCKER_VERSION=20.10.10 \
   NERDCTL_VERSION=0.18.0 \
   METALCLI_VERSION=0.6.0 \
   KO_VERSION=0.11.2 \
-  KN_VERSION=1.3.1 \
+  KN_VERSION=1.6.0 \
   UPTERM_VERSION=0.7.6 \
   GOPLS_VERSION=0.8.3 \
 # GOLANG, path vars
