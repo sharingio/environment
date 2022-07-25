@@ -1,7 +1,7 @@
 # Dockerfile
 #   definition to the environment container image
 
-ARG BASE_IMAGE=ubuntu:21.10
+ARG BASE_IMAGE=ubuntu:22.04
 FROM $BASE_IMAGE
 
 ARG ENV_DOOM_REPO=https://github.com/hlissner/doom-emacs
@@ -70,7 +70,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     iftop \
     tmux \
     language-pack-en \
-    openjdk-16-jdk \
+    openjdk-17-jdk \
     rlwrap \
     fonts-powerline \
     dnsutils \
