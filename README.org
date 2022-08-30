@@ -15,8 +15,8 @@ Additional components include:
   a reconciler for creating Kubernetes Service and Ingress resources to map back to environment, based off of environment-exporter's data
 
 ** Variables
+The following variables, when exported in the environment of a process that listens of UDP/TCP on all interfaces, will affect the way that processes are exposed using exporter/exposer on a Pair instance
 
-    The follow variables affect
    | Name                                    | Default             | Description                                                                  |
    |-----------------------------------------+---------------------+------------------------------------------------------------------------------|
    | =SHARINGIO_PAIR_EXPOSER_DISABLED=       | false               | disables the exporting of ports for the given process                        |
