@@ -37,9 +37,9 @@ func GetPortsListFromString(portsString string) (ports []int) {
 }
 
 // FilterSockFn filters a go-netstat process list
-func FilterSockFn(fn sockFn) (processes []netstat.SockTabEntry, err error) {
+func FilterSockFn(fn sockFn, protocol types.Protocol) (processes []netstat.SockTabEntry, err error) {
 	processes, err = fn(func(s *netstat.SockTabEntry) bool {
-		return s.State == netstat.Listen
+		return s.State == netstat.Listen || (protocol == types.ProtocolUDP && s.State == netstat.Close) || (protocol == types.ProtocolUDP && s.State == netstat.Established)
 	})
 	if err != nil {
 		return processes, err
@@ -140,7 +140,7 @@ func ListListeningProcesses() (processes []types.Process, err error) {
 		},
 	}
 	for _, s := range socks {
-		processSockList, err = FilterSockFn(s.fn)
+		processSockList, err = FilterSockFn(s.fn, s.protocol)
 		if err != nil {
 			log.Println(err)
 			continue
