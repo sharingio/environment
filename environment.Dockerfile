@@ -141,6 +141,7 @@ ENV DOCKER_VERSION=20.10.10 \
   KN_VERSION=1.6.0 \
   UPTERM_VERSION=0.7.6 \
   GOPLS_VERSION=0.8.3 \
+  CODESERVER_VERSION=4.7.0 \
 # GOLANG, path vars
   GOROOT=/usr/local/go \
   PATH="$PATH:/usr/local/go/bin:/usr/libexec/flatpak-xdg-utils:/home/ii/go/bin" \
@@ -206,6 +207,9 @@ RUN . /usr/lib/sharingio/environment/helper.sh \
   && curl -L https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}/dive_${DIVE_VERSION}_linux_${ARCH_TYPE_2}.tar.gz | tar --directory /usr/local/bin --extract --ungzip dive
 RUN . /usr/lib/sharingio/environment/helper.sh \
   && curl -L https://github.com/owenthereal/upterm/releases/download/v${UPTERM_VERSION}/upterm_linux_${ARCH_TYPE_2}.tar.gz | tar --directory /usr/local/bin --extract --ungzip upterm
+RUN curl -fL -o /tmp/code-server.deb https://github.com/coder/code-server/releases/download/v$CODESERVER_VERSION/code-server_${CODESERVER_VERSION}_${ARCH_TYPE_2}.deb \
+  && apt install -y /tmp/code-server.deb \
+  && rm /tmp/code-server.deb
 RUN set -x \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install golang.org/x/tools/gopls@v$GOPLS_VERSION \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/mikefarah/yq/v4@latest \
